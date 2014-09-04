@@ -20,7 +20,7 @@ class Game(object):
     # Sprite lists
     enemyA_list = None
     enemyB_list = None
-    numberEnemies = 10 #number of enemies for each group
+    numberEnemies = 2 #number of enemies for each group
     A1Enemies = ['A1' for i in range (numberEnemies)]
     A2Enemies = ['A2' for i in range (numberEnemies)]
     A3Enemies = ['A3' for i in range (numberEnemies)]
@@ -57,7 +57,6 @@ class Game(object):
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
     trajectory = []
     ammo = 100
-    captured_enemies = []
     isExplosion_center = False
     isExplosion_enemy = False
     isExplosion_player = False
@@ -72,7 +71,6 @@ class Game(object):
     exp8 = pygame.transform.scale(explosion_img, (45,45))
     exp9 = pygame.transform.scale(explosion_img, (50,50))
     explosionDur = 0 #keep track of timing of explosion animation
-    increaseSpeed=False
      
     # --- Class methods
     # Set up the game
@@ -182,7 +180,6 @@ class Game(object):
                     self.player.rotationSpeed+=1
                     Enemy.speed+=1
                     self.player.speed+=1
-                    self.increaseSpeed == False
                 
                 self.enemy_live = True
             
@@ -252,11 +249,22 @@ class Game(object):
                         time = core.getTime()
                         self.enemyBHitPlayerTime.append(time)
                         self.enemy_live = False
+                        self.enemy.wrong_hit()
                         self.elapsedTime = 0
                         self.score -= 20
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
-                    if self.enemy.targetReached:
+                    if not self.enemy.targetReached:
+                        time = core.getTime
+                        self.enemyAHitPlayerTime.append(time)
+                        self.enemy.wrong_hit()
+                        self.enemy_live = False
+                        self.elapsedTime = 0
+                        self.score -= 10
+                        self.isExplosion_enemy=True
+                        self.player.targetReached=True
+
+                    else:
                         time = core.getTime()
                         self.enemyAWrongHitTime.append(time)
                         self.explosionSound.out()
@@ -264,16 +272,6 @@ class Game(object):
                         self.isExplosion_player = True
                         self.elapsedTime = 0
                         self.enemy_live = False
-
-                    else:
-                        time = core.getTime
-                        self.enemyAHitPlayerTime.append(time)
-                        self.enemy.wrong_hit()
-                        self.enemy_live = False
-                        self.elapsedTime = 0
-                        self.score -= 10
-                        self.isExplosion_enemy==True
-                        self.player.targetReached==True
 
 
             """define end of level"""
@@ -304,7 +302,7 @@ class Game(object):
         if self.game_over:  
             font = pygame.font.Font(None, 25)
             text2 = font.render("You successfully killed "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " out of 16 enemies, for a score of {:.0f}".format(self.score),
+                                " out of 160 enemies, for a score of {:.0f}".format(self.score),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2

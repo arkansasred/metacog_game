@@ -57,10 +57,7 @@ class Game(object):
     enemy_live = False #bool to tell us if there is a live enemy
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
-    trajectory = []
-    trial = 0
     ammo = 100
-    captured_enemies = []
     renderTime = 0.0
     renderRemoval = 120.0
     render = None
@@ -169,19 +166,25 @@ class Game(object):
             self.enemy_live = False
 
         if not self.game_start and not self.game_over:
-        # Create the enemy sprites
+            #create enemy sprites
             if not self.enemy_live and self.elapsedTime==self.enemySpawnTime:
                 self.enemy_type = self.enemies_list.pop()
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
-                self.trial+=1
-                self.enemy_live = True
                 self.all_sprites_list.add(self.enemy)
                 if self.enemy_type=='A1' or self.enemy_type=='A2' or self.enemy_type=='A3' or self.enemy_type=='A4' or self.enemy_type=='A5' or self.enemy_type=='A6' or self.enemy_type=='A7' or self.enemy_type=='A8':
                     self.enemyA_list.add(self.enemy)
                 
                 elif self.enemy_type=='B1' or self.enemy_type=='B2' or self.enemy_type=='B3' or self.enemy_type=='B4' or self.enemy_type=='B5' or self.enemy_type=='B6' or self.enemy_type=='B7' or self.enemy_type=='B8':
                     self.enemyB_list.add(self.enemy)
+                
+                """for every 20 enemies killed/captured, increase speed"""
+
+                if len(self.enemies_list)<159 and (len(self.enemyAKillTime)+len(self.enemyBKillTime))%20 == 0:
+                    self.player.rotationSpeed+=1
+                    Enemy.speed+=1
+                    self.player.speed+=1
+                self.enemy_live = True
                 
             if self.enemy_live:
                 #when enemy enters screen, decrease score    

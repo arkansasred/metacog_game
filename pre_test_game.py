@@ -4,6 +4,7 @@ from pre_test import Game
 import pyo
 from global_variables import *
 from psychopy import core
+from enemy import Enemy
     
          
 def main():
@@ -24,7 +25,7 @@ def main():
     """ Main program function. """
     # Initialize Pygame and set up the window
     pygame.init()
-    
+
     s = pyo.Server(duplex=0)
     s.boot()
     s.start()

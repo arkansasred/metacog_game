@@ -112,8 +112,8 @@ class Enemy(pygame.sprite.Sprite):
             direction = dist.normalize() # normalize so its constant in all directions
             self.rect.x += (direction[0] * self.speed) # calculate speed from direction to move and speed constant
             self.rect.y += (direction[1] * self.speed)
-            dist_x = dist[0] ** 2 # gets absolute value of the x distance
-            dist_y = dist[1] ** 2 # gets absolute value of the y distance
+            dist_x = abs(dist[0]) # gets absolute value of the x distance
+            dist_y = abs(dist[1]) # gets absolute value of the y distance
             t_dist = dist_x + dist_y # gets total absolute value distance
             speed = self.speed ** 2 # gets aboslute value of the speed
             if t_dist < speed:

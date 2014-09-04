@@ -31,7 +31,7 @@ class Game(object):
     enemySightTime = []
     #Time measurements
     shotTime = []
-    captureTime = []
+    captureTime=[]
     enemyAKillTime = []
     enemyBKillTime = []
     enemyAWrongHitTime = []
@@ -46,7 +46,6 @@ class Game(object):
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
     trajectory = []
-    trial = 0
     ammo = 100
     captured_enemies = []
     isExplosion_center = False
@@ -157,7 +156,6 @@ class Game(object):
                 self.enemy_type = self.enemies_list.pop()
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
-                self.trial+=1
                 self.all_sprites_list.add(self.enemy)
                 if self.enemy_type=='A1' or self.enemy_type=='A2' or self.enemy_type=='A3' or self.enemy_type=='A4' or self.enemy_type=='A5' or self.enemy_type=='A6' or self.enemy_type=='A7' or self.enemy_type=='A8':
                     self.enemyA_list.add(self.enemy)
