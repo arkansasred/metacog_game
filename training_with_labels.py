@@ -3,21 +3,32 @@ import pygame
 from training_1 import Game
 import pyo
 from global_variables import *
+<<<<<<< HEAD
 from psychopy import core
 from enemy import Enemy
+=======
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
     
          
 def main():
     def checkData(SUBJECT):
         if path.exists("Subject %s/Training"%SUBJECT):
             SUBJECT = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+<<<<<<< HEAD
             return checkData(SUBJECT)
+=======
+            checkData(SUBJECT)
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
         return SUBJECT
         print SUBJECT
     
     subject = checkData(SUBJECT = raw_input("Subject Number: "))
     print subject
     try:
+<<<<<<< HEAD
+=======
+        mkdir("Subject %s"%subject)
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
         mkdir("Subject %s/Training"%subject)
     except:
         print "Woops, data already exists for this subject, check the subject folder and relaunch the game before proceeding"
@@ -25,8 +36,12 @@ def main():
     """ Main program function. """
     # Initialize Pygame and set up the window
     pygame.init()
+<<<<<<< HEAD
     s = pyo.Server(duplex=0) 
     s.setOutputDevice(14)  
+=======
+    s = pyo.Server(duplex=0)    
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
     s.boot()
     s.start()
     
@@ -88,12 +103,20 @@ def main():
         BKills.write(str(kill)+'\n')
     for hit in Game.enemyAWrongHitTime:
         AwrongHits.write(str(hit)+'\n')
+<<<<<<< HEAD
     for hit in Game.enemyBWrongHitTime:
+=======
+    for hit in Game.enembyBWrongHitTime:
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
         BwrongHits.write(str(hit)+'\n')
     for hit in Game.enemyAHitPlayerTime:
         AhitPlayer.write(str(hit)+'\n')
     for hit in Game.enemyBHitPlayerTime:
+<<<<<<< HEAD
         BhitPlayer.write(str(hit)+'\n')
+=======
+        Bhitplayer.write(str(hit)+'\n')
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
 
     shots.close()
     captures.close()
@@ -109,7 +132,10 @@ def main():
     s.stop()
     # Close window and exit
     pygame.quit()
+<<<<<<< HEAD
     core.quit()
+=======
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
 
  
 # Call the main function, start up the game
