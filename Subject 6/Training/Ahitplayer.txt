@@ -1,0 +1,20 @@
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+368.376644696
+379.08428002
+382.380108039
+<function getTime at 0x03423B70>
+424.09016224
+449.763509469
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
+545.23602203
+<function getTime at 0x03423B70>
+<function getTime at 0x03423B70>
