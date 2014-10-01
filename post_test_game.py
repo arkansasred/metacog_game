@@ -4,20 +4,46 @@ from post_test import Game
 import pyo
 from global_variables import *
 from psychopy import core
+<<<<<<< HEAD
 from enemy import Enemy
+=======
+<<<<<<< HEAD
+from enemy import Enemy
+=======
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
+>>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
     
          
 def main():
     def checkData(SUBJECT):
+<<<<<<< HEAD
         if path.exists("Subject %s/PostTest"%SUBJECT):
             SUBJECT = raw_input("Data already exists for that subject, Please choose a different subject number: ")
             return checkData(SUBJECT)
+=======
+<<<<<<< HEAD
+        if path.exists("Subject %s/PostTest"%SUBJECT):
+            SUBJECT = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+            return checkData(SUBJECT)
+=======
+        if path.exists("Subject %s/Training"%SUBJECT):
+            SUBJECT = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+            checkData(SUBJECT)
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
+>>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         return SUBJECT
         print SUBJECT
     
     subject = checkData(SUBJECT = raw_input("Subject Number: "))
     print subject
     try:
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+        mkdir("Subject %s"%subject)
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
+>>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         mkdir("Subject %s/PostTest"%subject)
     except:
         print "Woops, data already exists for this subject, check the subject folder and relaunch the game before proceeding"
@@ -81,12 +107,28 @@ def main():
         BKills.write(str(kill)+'\n')
     for hit in Game.enemyAWrongHitTime:
         AwrongHits.write(str(hit)+'\n')
+<<<<<<< HEAD
     for hit in Game.enemyBWrongHitTime:
+=======
+<<<<<<< HEAD
+    for hit in Game.enemyBWrongHitTime:
+=======
+    for hit in Game.enembyBWrongHitTime:
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
+>>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         BwrongHits.write(str(hit)+'\n')
     for hit in Game.enemyAHitPlayerTime:
         AhitPlayer.write(str(hit)+'\n')
     for hit in Game.enemyBHitPlayerTime:
+<<<<<<< HEAD
         BhitPlayer.write(str(hit)+'\n')
+=======
+<<<<<<< HEAD
+        BhitPlayer.write(str(hit)+'\n')
+=======
+        Bhitplayer.write(str(hit)+'\n')
+>>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
+>>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
 
     shots.close()
     captures.close()

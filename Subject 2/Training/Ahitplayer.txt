@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <function getTime at 0x03410B70>
 311.758134817
 <function getTime at 0x03410B70>
@@ -15,3 +16,22 @@
 <function getTime at 0x03410B70>
 <function getTime at 0x03410B70>
 <function getTime at 0x03410B70>
+=======
+<function getTime at 0x03410B70>
+311.758134817
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+<function getTime at 0x03410B70>
+>>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
