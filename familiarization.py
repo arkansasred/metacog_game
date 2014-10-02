@@ -19,23 +19,10 @@ class Game(object):
     enemyA_list = None
     enemyB_list = None
     numberEnemies = 1 #number of enemies for each group
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
     A1Enemies = ['A1' for i in range (numberEnemies)]
     A2Enemies = ['A10' for i in range (numberEnemies)]
     B1Enemies = ['B2' for i in range(numberEnemies)]
     B2Enemies = ['B11' for i in range(numberEnemies)]
-<<<<<<< HEAD
-=======
-=======
-    A1Enemies = ['A5' for i in range (numberEnemies)]
-    A2Enemies = ['A6' for i in range (numberEnemies)]
-    B1Enemies = ['B5' for i in range(numberEnemies)]
-    B2Enemies = ['B6' for i in range(numberEnemies)]
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
     enemies_list = A1Enemies + A2Enemies  + B1Enemies + B2Enemies
     totalEnemies = len(enemies_list)
     bullet_list = None
@@ -48,15 +35,7 @@ class Game(object):
     enemyAKillTime = []
     enemyBKillTime = []
     enemyAWrongHitTime = []
-<<<<<<< HEAD
     enemyBWrongHitTime = []
-=======
-<<<<<<< HEAD
-    enemyBWrongHitTime = []
-=======
-    enembyBWrongHitTime = []
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
     #record when player does not hit the enemy at all (enemy hits player)
     enemyAHitPlayerTime = []
     enemyBHitPlayerTime = []
@@ -104,16 +83,8 @@ class Game(object):
         self.player = Player()
         #shot sound
         self.shot_sound = pyo.SfPlayer("Sounds/laser_shot.aif", mul=0.4)
-<<<<<<< HEAD
         #wrong button sound
         self.wrong_button = pyo.SfPlayer("Sounds/wrong_hit.wav")
-=======
-<<<<<<< HEAD
-        #wrong button sound
-        self.wrong_button = pyo.SfPlayer("Sounds/wrong_hit.wav")
-=======
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
 
         self.explosionSound = pyo.SfPlayer("Sounds/explosion.wav", speed=[1,1], mul=0.5)
  
@@ -122,10 +93,6 @@ class Game(object):
             to close the window. """
 
         def shoot(color, target, degree, origin):
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
             if self.ammo > 0:
                 self.bullet = Bullet(color, target, degree, origin)
                 self.bullet.color = str(color)
@@ -142,22 +109,6 @@ class Game(object):
             else:
                 self.wrong_button.out()
 
-<<<<<<< HEAD
-=======
-=======
-            self.bullet = Bullet(color, target, degree, origin)
-            self.bullet.color = str(color)
-            #play bullet sound
-            self.shot_sound.out()
-            #decrease ammo supply by 1
-            self.ammo-=1
-            # Add the bullet to the lists
-            self.all_sprites_list.add(self.bullet)
-            shot = core.getTime()
-            self.shotTime.append(shot)
-            self.bullet_list.add(self.bullet)
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
          
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -213,10 +164,6 @@ class Game(object):
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
                 self.all_sprites_list.add(self.enemy)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
                 if self.enemy_type=='A1' or self.enemy_type=='A2' or self.enemy_type=='A3' or self.enemy_type=='A4' or self.enemy_type=='A5' or self.enemy_type=='A6' or self.enemy_type=='A7' or self.enemy_type=='A8' or self.enemy_type=='A9' or self.enemy_type=='A10' or self.enemy_type=='A11' or self.enemy_type=='A12':
                     self.enemyA_list.add(self.enemy)
                 
@@ -225,16 +172,6 @@ class Game(object):
                 if len(self.enemies_list)<3 and len(self.enemies_list)%1==0:
                     Enemy.speed+=1
                     self.player.rotationSpeed+=1
-<<<<<<< HEAD
-=======
-=======
-                if self.enemy_type=='A1' or self.enemy_type=='A2' or self.enemy_type=='A3' or self.enemy_type=='A4' or self.enemy_type=='A5' or self.enemy_type=='A6' or self.enemy_type=='A7' or self.enemy_type=='A8':
-                    self.enemyA_list.add(self.enemy)
-                
-                elif self.enemy_type=='B1' or self.enemy_type=='B2' or self.enemy_type=='B3' or self.enemy_type=='B4' or self.enemy_type=='B5' or self.enemy_type=='B6' or self.enemy_type=='B7' or self.enemy_type=='B8':
-                    self.enemyB_list.add(self.enemy)
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
                 self.enemy_live = True
             if self.enemy_live:
                 #when enemy enters screen, decrease score    
@@ -264,15 +201,7 @@ class Game(object):
                 """give audio feedback if wrong sprite shot"""
                 if pygame.sprite.spritecollide(bullet, self.enemyB_list, True):
                     time = core.getTime()
-<<<<<<< HEAD
                     self.enemyBWrongHitTime.append(time)
-=======
-<<<<<<< HEAD
-                    self.enemyBWrongHitTime.append(time)
-=======
-                    self.enembyBWrongHitTime.append(time)
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
                     self.enemy.wrong_hit()
                     self.score -= 20
                     self.isExplosion_enemy = True
@@ -292,15 +221,7 @@ class Game(object):
                     self.enemy.wrong_hit()
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
-<<<<<<< HEAD
                     time = core.getTime()
-=======
-<<<<<<< HEAD
-                    time = core.getTime()
-=======
-                    time = core.getTime
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
                     self.enemyAHitPlayerTime.append(time)
                     self.enemy_live = False
                     self.elapsedTime = 0
@@ -359,21 +280,6 @@ class Game(object):
             center_x = (SCREEN_WIDTH // 2) - (text.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) - (text.get_height() // 2) + spacing
             screen.blit(text, [center_x,center_y])
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-        def display_enemies():
-            A = pygame.image.load(Enemy.enemyA_images[0])
-            A = pygame.transform.scale(A, [75,75])
-            A.set_colorkey(WHITE)
-            B = pygame.image.load(Enemy.enemyB_images[1])
-            B = pygame.transform.scale(B, [75,75])
-            B.set_colorkey(WHITE)
-            screen.blit(A, [420,420])
-            screen.blit(B, [520,420])
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
 
         if self.game_over:  
             font = pygame.font.Font(None, 25)
@@ -391,10 +297,6 @@ class Game(object):
                                True, WHITE)
             text2 = font.render("Space:            Enter:", True, WHITE)
             text3 = font.render ("Press the Space bar to begin", True, WHITE)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
             shoot = font.render("SHOOT",True, RED)
             capture = font.render("CAPTURE", True, GREEN)
             center_text(text)
@@ -402,15 +304,6 @@ class Game(object):
             next_line(text3, 140)
             screen.blit(shoot, [520,440])
             screen.blit(capture, [420,440])
-<<<<<<< HEAD
-=======
-=======
-            center_text(text)
-            next_line(text2, 40)
-            next_line(text3, 140)
-            display_enemies()
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
             
          
         if not self.game_over and not self.game_start:

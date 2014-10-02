@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <function getTime at 0x03414B70>
 <function getTime at 0x03414B70>
 <function getTime at 0x03414B70>
@@ -20,26 +19,3 @@
 680.06314134
 683.055147244
 <function getTime at 0x03414B70>
-=======
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-567.766541441
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-<function getTime at 0x03414B70>
-680.06314134
-683.055147244
-<function getTime at 0x03414B70>
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9

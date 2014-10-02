@@ -17,15 +17,7 @@ class Enemy(pygame.sprite.Sprite):
     enemySightTime = []
     centerScreen = (SCREEN_WIDTH//2,SCREEN_HEIGHT//2)
     target = centerScreen
-<<<<<<< HEAD
     speed = 1.5
-=======
-<<<<<<< HEAD
-    speed = 1.5
-=======
-    speed = 2
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
     targetReached = False
     offsetTime = speed*FPS*offscreen_time #multiply by FPS for fps-->s
     offset_points = [(-offsetTime,-offsetTime),(SCREEN_WIDTH//2, -offsetTime),(SCREEN_WIDTH+offsetTime,-offsetTime),
@@ -62,10 +54,6 @@ class Enemy(pygame.sprite.Sprite):
         elif self.enemy_type == 'A8':
             self.image = pygame.image.load(self.enemyA_images[7])
         
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         elif self.enemy_type == 'A9':
             self.image = pygame.image.load(self.enemyB_images[8])
 
@@ -78,11 +66,6 @@ class Enemy(pygame.sprite.Sprite):
         elif self.enemy_type == 'A12':
             self.image = pygame.image.load(self.enemyB_images[11])
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         if self.enemy_type == 'B1':
             self.image = pygame.image.load(self.enemyB_images[0])
         
@@ -107,10 +90,6 @@ class Enemy(pygame.sprite.Sprite):
         elif self.enemy_type == 'B8':
             self.image = pygame.image.load(self.enemyB_images[7])
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         elif self.enemy_type == 'B9':
             self.image = pygame.image.load(self.enemyB_images[8])
 
@@ -122,11 +101,6 @@ class Enemy(pygame.sprite.Sprite):
 
         elif self.enemy_type == 'B12':
             self.image = pygame.image.load(self.enemyB_images[11])
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
             
         self.image = pygame.transform.smoothscale(self.image, (75,75))
         self.image.set_colorkey((255,255,255))

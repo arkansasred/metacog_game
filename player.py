@@ -22,15 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.trueY = SCREEN_HEIGHT//2 # decimal values but these do
         self.originPoint = (SCREEN_WIDTH//2,SCREEN_HEIGHT//2)
         self.speed = 10 # movement speed of the player when capturing
-<<<<<<< HEAD
         self.rotationSpeed = 2 #rotation speed of player
-=======
-<<<<<<< HEAD
-        self.rotationSpeed = 2 #rotation speed of player
-=======
-        self.rotationSpeed = 4 #rotation speed of player
->>>>>>> 6d046b60d7c3ac6be4a3c27d1a07691d0e6fdfea
->>>>>>> 926bc0538fcf5630958a3f1c79ad5755b1ad54e9
         self.turnLeft = False
         self.turnRight = False
 
