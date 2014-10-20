@@ -4,7 +4,7 @@ from player import Player
 from global_variables import *
 
 class Bullet(pygame.sprite.Sprite):
-    bulletSpeed = 10
+    bulletSpeed = 12
     def __init__(self, color, target, degree, origin):
         pygame.sprite.Sprite.__init__(self)                  
         self.image = pygame.Surface([15, 20])

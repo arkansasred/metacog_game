@@ -19,9 +19,9 @@ class Game(object):
     enemyA_list = None
     enemyB_list = None
     numberEnemies = 1 #number of enemies for each group
-    A1Enemies = ['A1' for i in range (numberEnemies)]
-    A2Enemies = ['A10' for i in range (numberEnemies)]
-    B1Enemies = ['B2' for i in range(numberEnemies)]
+    A1Enemies = ['A10' for i in range (numberEnemies)]
+    A2Enemies = ['A11' for i in range (numberEnemies)]
+    B1Enemies = ['B10' for i in range(numberEnemies)]
     B2Enemies = ['B11' for i in range(numberEnemies)]
     enemies_list = A1Enemies + A2Enemies  + B1Enemies + B2Enemies
     totalEnemies = len(enemies_list)
@@ -161,6 +161,7 @@ class Game(object):
         # Create the enemy sprites
             if not self.enemy_live and self.elapsedTime==self.enemySpawnTime:
                 self.enemy_type = self.enemies_list.pop()
+                print self.enemies_list
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
                 self.all_sprites_list.add(self.enemy)
@@ -203,7 +204,7 @@ class Game(object):
                     time = core.getTime()
                     self.enemyBWrongHitTime.append(time)
                     self.enemy.wrong_hit()
-                    self.score -= 20
+                    self.score -= 10
                     self.isExplosion_enemy = True
                     self.elapsedTime = 0
                     self.enemy_live = False
@@ -248,7 +249,7 @@ class Game(object):
                         self.enemyAWrongHitTime.append(time)
                         self.explosionSound.out()
                         self.score -= 20
-                        self.isExplosion_player = True
+                        self.isExplosion_center = True
                         self.elapsedTime = 0
                         self.enemy_live = False
 
@@ -259,7 +260,7 @@ class Game(object):
                         self.enemy_live = False
                         self.elapsedTime = 0
                         self.score -= 10
-                        self.isExplosion_center=True
+                        self.isExplosion_player=True
 
             
 
@@ -283,8 +284,8 @@ class Game(object):
 
         if self.game_over:  
             font = pygame.font.Font(None, 25)
-            text2 = font.render("You successfully killed "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " out of 4 enemies, for a score of {:.0f}".format(self.score),
+            text2 = font.render("You successfully killed or captured "+ str(((len(self.enemyAKillTime)+len(self.enemyBKillTime))/(4.0))*100.0) +
+                                " %  of the aliens you encountered, for a score of {:.0f}".format(self.score),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2

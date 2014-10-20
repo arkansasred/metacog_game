@@ -55,16 +55,16 @@ class Enemy(pygame.sprite.Sprite):
             self.image = pygame.image.load(self.enemyA_images[7])
         
         elif self.enemy_type == 'A9':
-            self.image = pygame.image.load(self.enemyB_images[8])
+            self.image = pygame.image.load(self.enemyA_images[8])
 
         elif self.enemy_type == 'A10':
-            self.image = pygame.image.load(self.enemyB_images[9])
+            self.image = pygame.image.load(self.enemyA_images[9])
 
         elif self.enemy_type == 'A11':
-            self.image = pygame.image.load(self.enemyB_images[10])
+            self.image = pygame.image.load(self.enemyA_images[10])
 
         elif self.enemy_type == 'A12':
-            self.image = pygame.image.load(self.enemyB_images[11])
+            self.image = pygame.image.load(self.enemyA_images[11])
 
         if self.enemy_type == 'B1':
             self.image = pygame.image.load(self.enemyB_images[0])
@@ -102,8 +102,8 @@ class Enemy(pygame.sprite.Sprite):
         elif self.enemy_type == 'B12':
             self.image = pygame.image.load(self.enemyB_images[11])
             
-        self.image = pygame.transform.smoothscale(self.image, (75,75))
-        self.image.set_colorkey((255,255,255))
+        self.image = pygame.transform.smoothscale(self.image, (80,80))
+        self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
 
     def set_speed(speed):
@@ -142,7 +142,3 @@ class Enemy(pygame.sprite.Sprite):
             if t_dist < speed:
                 self.target = None
                 self.targetReached = True
-        """ Record time right when enemy fully enters screen """
-        if -1<= self.rect.y <= 0 or -1<= self.rect.x <= 0 or SCREEN_WIDTH+1>=self.rect.x>=SCREEN_WIDTH or SCREEN_HEIGHT+1>=self.rect.y>=SCREEN_HEIGHT:
-            t_sight = core.getTime()
-            self.enemySightTime.append(t_sight)

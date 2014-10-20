@@ -7,6 +7,7 @@ from enemy import Enemy
 from player import Player
 from global_variables import *
 from random import shuffle
+import eztext
 
 """No labels training stage"""
 
@@ -20,23 +21,23 @@ class Game(object):
     # Sprite lists
     enemyA_list = None
     enemyB_list = None
-    numberEnemies = 6 #number of enemies for each group
-    A1Enemies = ['A1' for i in range (numberEnemies)]
-    A2Enemies = ['A2' for i in range (numberEnemies)]
-    A3Enemies = ['A3' for i in range (numberEnemies)]
-    A4Enemies = ['A4' for i in range (numberEnemies)]
-    A5Enemies = ['A5' for i in range (numberEnemies)]
-    A6Enemies = ['A6' for i in range (numberEnemies)]
-    A7Enemies = ['A7' for i in range (numberEnemies)]
-    A8Enemies = ['A8' for i in range (numberEnemies)]
+    numberEnemies = 10 #number of enemies for each group
+    A1Enemies = ['A2' for i in range (numberEnemies)]
+    A2Enemies = ['A4' for i in range (numberEnemies)]
+    A3Enemies = ['A7' for i in range (numberEnemies)]
+    A4Enemies = ['A8' for i in range (numberEnemies)]
+    A5Enemies = ['A9' for i in range (numberEnemies)]
+    A6Enemies = ['A10' for i in range (numberEnemies)]
+    A7Enemies = ['A11' for i in range (numberEnemies)]
+    A8Enemies = ['A12' for i in range (numberEnemies)]
     B1Enemies = ['B1' for i in range(numberEnemies)]
     B2Enemies = ['B2' for i in range(numberEnemies)]
-    B3Enemies = ['B3' for i in range(numberEnemies)]
-    B4Enemies = ['B4' for i in range(numberEnemies)]
-    B5Enemies = ['B5' for i in range(numberEnemies)]
-    B6Enemies = ['B6' for i in range(numberEnemies)]
-    B7Enemies = ['B7' for i in range(numberEnemies)]
-    B8Enemies = ['B8' for i in range(numberEnemies)]
+    B3Enemies = ['B7' for i in range(numberEnemies)]
+    B4Enemies = ['B8' for i in range(numberEnemies)]
+    B5Enemies = ['B9' for i in range(numberEnemies)]
+    B6Enemies = ['B10' for i in range(numberEnemies)]
+    B7Enemies = ['B11' for i in range(numberEnemies)]
+    B8Enemies = ['B12' for i in range(numberEnemies)]
     enemies_list = A1Enemies + A2Enemies + A3Enemies + A4Enemies + A5Enemies + A6Enemies + A7Enemies + A8Enemies + B1Enemies + B2Enemies + B3Enemies + B4Enemies + B5Enemies + B6Enemies + B7Enemies + B8Enemies
     bullet_list = None
     all_sprites_list = None
@@ -51,13 +52,19 @@ class Game(object):
     #record when player does not hit the enemy at all (enemy hits player)
     enemyAHitPlayerTime = []
     enemyBHitPlayerTime = []
+    enemyASightTime = []
+    enemyBSightTime = []
+    answer1Val= []
+    answer2Val= []
+    answer1Actual = []
+    answer2Actual = []
     # Other data
     score = 0
     maxTrials = 40 #maximum number of enemies to play through
     enemy_live = False #bool to tell us if there is a live enemy
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
-    ammo = 100
+    ammo = numberEnemies*24 #3 bullets per true 'enemy'
     renderTime = 0.0
     renderRemoval = 120.0
     render = None
@@ -75,7 +82,12 @@ class Game(object):
     exp8 = pygame.transform.scale(explosion_img, (45,45))
     exp9 = pygame.transform.scale(explosion_img, (50,50))
     explosionDur = 0 #keep track of timing of explosion animation
-     
+    getMetacogEval = False
+    answer1 = True
+    sight = False
+    halfway=False #elicit another prospective assesment at halfway point
+    previousKill= False #helps keep track of whether previous trial was successful
+
     # --- Class methods
     # Set up the game
     def __init__(self):
@@ -91,7 +103,8 @@ class Game(object):
         self.all_sprites_list = pygame.sprite.Group()
         self.bullet_list = pygame.sprite.Group()
 
-         
+        self.q1=eztext.Input(x=10, y=SCREEN_HEIGHT//2, font = pygame.font.Font(None,28), maxlength=45, color=GREEN, prompt='For the next series of %s Aliens, how many do you think you will successfully shoot or capture?:  '%(self.numberEnemies*8))
+        self.q2=eztext.Input(x=SCREEN_WIDTH//2-400, y=SCREEN_HEIGHT//2, maxlength=45,color=GREEN,prompt="What do you think your score will be for this segment of the game?:  ")          
          
         # Create the player
         self.player = Player()
@@ -123,7 +136,9 @@ class Game(object):
             else:
                 self.wrong_button.out()
          
-        for event in pygame.event.get():
+        self.events = pygame.event.get()
+
+        for event in self.events:
             if event.type == pygame.QUIT:
                 return True
 
@@ -133,10 +148,31 @@ class Game(object):
                 elif event.key == pygame.K_RIGHT:
                     self.player.turnRight = True
                 elif event.key == pygame.K_RETURN:
-                    shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
+                    if self.getMetacogEval and self.answer1:
+                        """log the estimate in the answer1Val list, go to second question"""
+                        estimate=self.q1.value
+                        print estimate
+                        self.answer1Val.append(estimate)
+                        self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
+                        self.q1.value=""
+                        self.answer1=False
+                    elif self.getMetacogEval and not self.answer1:
+                        estimate=self.q2.value
+                        self.answer2Val.append(estimate)
+                        self.q2.value=""
+                        self.answer2Actual.append(self.score)
+                        self.getMetacogEval=False
+                        self.answer1=True
+                        self.elapsedTime = 1
+                    else:
+                        shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
                 elif event.key == pygame.K_SPACE:
                     if self.game_start:
                         self.game_start = False
+                        self.getMetacogEval=True
+                    elif self.halfway:
+                        self.halfway = False
+                        self.getMetacogEval = True
                     else: 
                         self.player.capture()
                         capture = core.getTime()
@@ -170,31 +206,43 @@ class Game(object):
             self.score += 20
             self.elapsedTime = 0
             self.enemy_live = False
+        
+        if self.sight:
+            time = core.getTime()
+            if self.enemy_type[0]=='A':
+                self.enemyASightTime.appned(time)
+            elif self.enemy_type[0]=='B':
+                self.enemyBSightTime.append(time)
 
-        if not self.game_start and not self.game_over:
+        if not self.game_start and not self.game_over and not self.halfway:
             #create enemy sprites
-            if not self.enemy_live and self.elapsedTime==self.enemySpawnTime:
+            if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
                 self.enemy_type = self.enemies_list.pop()
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
                 self.all_sprites_list.add(self.enemy)
-                if self.enemy_type=='A1' or self.enemy_type=='A2' or self.enemy_type=='A3' or self.enemy_type=='A4' or self.enemy_type=='A5' or self.enemy_type=='A6' or self.enemy_type=='A7' or self.enemy_type=='A8' or self.enemy_type=='A9' or self.enemy_type=='A10' or self.enemy_type=='A11' or self.enemy_type=='A12':
+                if self.enemy_type[0]=='A':
                     self.enemyA_list.add(self.enemy)
                 
-                elif self.enemy_type=='B1' or self.enemy_type=='B2' or self.enemy_type=='B3' or self.enemy_type=='B4' or self.enemy_type=='B5' or self.enemy_type=='B6' or self.enemy_type=='B7' or self.enemy_type=='B8'or self.enemy_type=='B9' or self.enemy_type=='B10' or self.enemy_type=='B11' or self.enemy_type=='B12':
+                elif self.enemy_type[0]=='B':
                     self.enemyB_list.add(self.enemy)
                 
                 """for every 20 enemies killed/captured, increase speed"""
 
-                if len(self.enemies_list)<(self.numberEnemies*16-1) and (len(self.enemyAKillTime)+len(self.enemyBKillTime))%20 == 0:
+                if len(self.enemies_list)<(self.numberEnemies*16-1) and self.previousKill and (len(self.enemyAKillTime)+len(self.enemyBKillTime))%(self.numberEnemies*4) == 0:
                     self.player.rotationSpeed+=1
                     Enemy.speed+=1
                     self.player.speed+=1
+                
                 self.enemy_live = True
                 
             if self.enemy_live:
-                #when enemy enters screen, decrease score    
-                self.score -= 1/float(60) # decrease score by 1 for every second that enemy is alive
+                #when enemy enters screen, decrease score
+                """ Record time right when enemy fully enters screen """
+                if 0<= self.enemy.rect.y<=SCREEN_HEIGHT or 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
+                    self.sight = True
+                    self.sight=False
+                    self.score -= 1/float(60) # decrease score by 1 for every second that enemy is alive
          
             
             # Move all the sprites
@@ -264,7 +312,7 @@ class Game(object):
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
                     if not self.enemy.targetReached:
-                        time = core.getTime
+                        time = core.getTime()
                         self.enemyAHitPlayerTime.append(time)
                         self.enemy.wrong_hit()
                         self.enemy_live = False
@@ -282,7 +330,8 @@ class Game(object):
                         self.elapsedTime = 0
                         self.enemy_live = False
 
-
+            if len(self.enemies_list)==(self.numberEnemies*16)//2 and self.elapsedTime==0:
+                self.halfway = True
 
             """define end of level"""
             if len(self.enemies_list)==0 and not self.enemy_live:
@@ -300,17 +349,16 @@ class Game(object):
             center_y = (SCREEN_HEIGHT // 2) - (text.get_height() // 2) + spacing
             screen.blit(text, [center_x,center_y])
 
-        if self.game_over:  
+        if self.halfway:  
             font = pygame.font.Font(None, 25)
-            text2 = font.render("You successfully killed "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " out of 96 enemies, for a score of {:.0f}".format(self.score),
+            text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
+                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d.  Hit space to continue"%(self.score),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])
 
-            
-        if self.game_start:
+        elif self.game_start:
             font = pygame.font.Font(None, 25)
             text = font.render("Hello, thank you for participating in this experiment! You will be using the following buttons for the first level:",
                                True, WHITE)
@@ -321,11 +369,29 @@ class Game(object):
             center_text(text)
             next_line(text2, 40)
             next_line(text3, 140)
-            screen.blit(shoot, [420,420])
-            screen.blit(capture, [520,420])
-            
-         
-        if not self.game_over and not self.game_start:
+            screen.blit(shoot, [520,440])
+            screen.blit(capture, [420,440])
+
+        elif self.getMetacogEval:
+            if self.answer1:
+                """ask for perecent correct estimate"""
+                self.q1.update(self.events)
+                self.q1.draw(screen)
+                
+            else:
+                self.q2.update(self.events)
+                self.q2.draw(screen)
+
+        elif self.game_over:  
+            font = pygame.font.Font(None, 25)
+            text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
+                                " of the " + str(self.numberEnemies*16) + " aliens you encountered, for a score of {:.0f}".format(self.score),
+                                True, GREEN)
+            center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
+            center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
+            screen.blit(text2, [center_x, center_y])  
+        
+        else:
             #draw sprites, print score
             self.all_sprites_list.draw(screen)
             screen.blit(self.player.rotated,self.player.rect)

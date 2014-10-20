@@ -61,16 +61,21 @@ def main():
     
     directory = "Subject %s/PreTest/"%subject
     shots = open(directory+"shots.txt", 'w')
-    captures = open(directory+"captures.txt", 'w')
+    captures = open(directory+"captures.txt", 'w') # this is the capture 'attempt' timestamp
     AKills = open(directory+"Akills.txt", 'w')
     BKills = open (directory+'Bkills.txt', 'w')
     AwrongHits = open(directory+"Awronghits.txt", 'w')
     BwrongHits = open(directory+"Bwronghits.txt", 'w')
     AhitPlayer = open(directory+"Ahitplayer.txt", 'w')
     BhitPlayer = open(directory+"Bhitplayer.txt", 'w')
-    sights = open(directory+"sights.txt", 'w')
-    for sight in Enemy.enemySightTime:
-        sights.write(str(sight)+'\n')
+    sightsA = open(directory+"sightsA.txt", 'w')
+    sightsB = open(directory+"sightsB.txt", 'w')
+    numberPrediction = open(directory+"numberPrediction.txt", 'w')
+    scorePrediction = open(directory+"scorePrediction.txt", 'w')
+    for sight in Game.enemyASightTime:
+        sightsA.write(str(sight)+'\n')
+    for sight in Game.enemyBSightTime:
+        sightsB.write(str(sight)+'\n')
     for shot in Game.shotTime:
         shots.write(str(shot)+'\n')
     for capture in Game.captureTime:
@@ -87,6 +92,11 @@ def main():
         AhitPlayer.write(str(hit)+'\n')
     for hit in Game.enemyBHitPlayerTime:
         BhitPlayer.write(str(hit)+'\n')
+    for prediction in Game.answer1Val:
+        numberPrediction.write(str(prediction)+'\n')
+    for prediction in Game.answer2Val:
+        scorePrediction.write(str(prediction)+'\n')
+
 
     shots.close()
     captures.close()
@@ -96,6 +106,10 @@ def main():
     BwrongHits.close()
     AhitPlayer.close()
     BhitPlayer.close()
+    numberPrediction.close()
+    scorePrediction.close()
+    sightsA.close()
+    sightsB.close()
 
     #shut down pyo server
     s.stop()
