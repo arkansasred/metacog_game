@@ -76,6 +76,8 @@ def main():
     sightsB = open(directory+"sightsB.txt", 'w')
     numberPrediction = open(directory+"numberPrediction.txt", 'w')
     scorePrediction = open(directory+"scorePrediction.txt", 'w')
+    numberActual = open(directory+"numberActual.txt",'w')
+    scoreActual = open(directory+"scoreActual.txt", 'w')
     for sight in Game.enemyASightTime:
         sightsA.write(str(sight)+'\n')
     for sight in Game.enemyBSightTime:
@@ -84,6 +86,10 @@ def main():
         shots.write(str(shot)+'\n')
     for capture in Game.captureTime:
         captures.write(str(capture)+'\n')
+    for kill in Game.enemyAKillTime1:
+        AKills.write(str(kill)+'\n')
+    for kill in Game.enemyBKillTime1:
+        BKills.write(str(kill)+'\n')
     for kill in Game.enemyAKillTime:
         AKills.write(str(kill)+'\n')
     for kill in Game.enemyBKillTime:
@@ -100,6 +106,8 @@ def main():
         numberPrediction.write(str(prediction)+'\n')
     for prediction in Game.answer2Val:
         scorePrediction.write(str(prediction)+'\n')
+    scoreActual.write(str(Game.score1) + '\n'+str(Game.score))
+    numberActual.write(str(len(Game.enemyAKillTime1)+len(Game.enemyBKillTime1)+'\n'+str(len(Game.enemyAKillTime)+len(Game.enemyBKillTime))))
 
 
     shots.close()
@@ -114,6 +122,8 @@ def main():
     scorePrediction.clost()
     sightsA.close()
     sightsB.close()
+    scoreActual.close()
+    numberActual.close()
 
     #shut down pyo server
     s.stop()

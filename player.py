@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
             - self
         '''
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("Ship.bmp") # load image
+        self.image = pygame.image.load("ship.bmp") # load image
         self.image.set_colorkey(BLACK)
         #define radius for tracing circle around player
         self.radius = 500

@@ -103,7 +103,7 @@ class Game(object):
     isExplosion_center = False
     isExplosion_enemy = False
     isExplosion_player = False
-    explosion_img = pygame.image.load('images/explosion1.bmp')
+    explosion_img = pygame.image.load('Images/explosion1.bmp')
     exp1 = pygame.transform.scale(explosion_img, (10,10))
     exp2 = pygame.transform.scale(explosion_img, (15,15))
     exp3 = pygame.transform.scale(explosion_img, (20,20))
@@ -203,6 +203,12 @@ class Game(object):
                         self.getMetacogEval=True
                     elif self.halfway:
                         self.halfway = False
+                        self.score1 = self.score
+                        self.score = 0
+                        self.enemyAKillTime1 = self.enemyAKillTime
+                        self.enemyBKillTime1 = self.enemyBKillTime
+                        self.enemyAKillTime= []
+                        self.enemyBKillTime = []
                         self.getMetacogEval = True
                     else: 
                         self.player.capture()
@@ -452,8 +458,7 @@ class Game(object):
         elif self.game_over:  
             font = pygame.font.Font(None, 25)
             text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " of the " + str(self.numberEnemies*16) + " aliens you encountered, for a score of {:.0f}".format(self.score),
-                                True, GREEN)
+                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d.  Your total score for the game was %d"%(self.score,self.score1+self.score), True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])  
