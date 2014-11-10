@@ -66,6 +66,7 @@ class Game(object):
     B6Enemies = ['B10' for i in range(numberEnemies)]
     B7Enemies = ['B11' for i in range(numberEnemies)]
     B8Enemies = ['B12' for i in range(numberEnemies)]
+
     enemies_list = A1Enemies + A2Enemies + A3Enemies + A4Enemies + A5Enemies + A6Enemies + A7Enemies + A8Enemies + B1Enemies + B2Enemies + B3Enemies + B4Enemies + B5Enemies + B6Enemies + B7Enemies + B8Enemies
     bullet_list = None
     all_sprites_list = None
@@ -75,6 +76,9 @@ class Game(object):
     captureTime = []
     enemyAKillTime = []
     enemyBKillTime = []
+    #will be used to store "kill" time measurements for 1st half of game (kill refers to both kill/capture)
+    enemyAKillTime1 = []
+    enemyBKillTime1 = []
     enemyAWrongHitTime = []
     enemyBWrongHitTime = []
     answer1Val= []
@@ -86,7 +90,6 @@ class Game(object):
     enemyBHitPlayerTime = []
     enemyASightTime = []
     enemyBSightTime = []
-    score = 0
     enemy_live = False #bool to tell us if there is a live enemy
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
@@ -100,10 +103,12 @@ class Game(object):
         renderTime = 0.0
         renderRemoval = 120.0
         render = None
+
     isExplosion_center = False
     isExplosion_enemy = False
     isExplosion_player = False
     explosion_img = pygame.image.load('Images/explosion1.bmp')
+
     exp1 = pygame.transform.scale(explosion_img, (10,10))
     exp2 = pygame.transform.scale(explosion_img, (15,15))
     exp3 = pygame.transform.scale(explosion_img, (20,20))
@@ -119,6 +124,8 @@ class Game(object):
     sight = False
     halfway=False #elicit another prospective assesment at halfway point
     previousKill= False #helps keep track of whether previous trial was successful
+    score = None
+    score1 = None
 
     # --- Class methods
     # Set up the game
@@ -184,14 +191,12 @@ class Game(object):
                         estimate=self.q1.value
                         print estimate
                         self.answer1Val.append(estimate)
-                        self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
                         self.q1.value=""
                         self.answer1=False
                     elif self.getMetacogEval and not self.answer1:
                         estimate=self.q2.value
                         self.answer2Val.append(estimate)
                         self.q2.value=""
-                        self.answer2Actual.append(self.score)
                         self.getMetacogEval=False
                         self.answer1=True
                         self.elapsedTime = 1
@@ -203,13 +208,15 @@ class Game(object):
                         self.getMetacogEval=True
                     elif self.halfway:
                         self.halfway = False
+                        self.getMetacogEval = True
+                        self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
+                        self.answer2Actual.append(self.score)
+                        self.enemyAKillTime1.extend(self.enemyAKillTime)
+                        del self.enemyAKillTime[:]
+                        self.enemyBKillTime1.extend(self.enemyBKillTime)
+                        del self.enemyBKillTime[:]
                         self.score1 = self.score
                         self.score = 0
-                        self.enemyAKillTime1 = self.enemyAKillTime
-                        self.enemyBKillTime1 = self.enemyBKillTime
-                        self.enemyAKillTime= []
-                        self.enemyBKillTime = []
-                        self.getMetacogEval = True
                     else: 
                         self.player.capture()
                         capture = core.getTime()
@@ -457,8 +464,9 @@ class Game(object):
 
         elif self.game_over:  
             font = pygame.font.Font(None, 25)
-            text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d.  Your total score for the game was %d"%(self.score,self.score1+self.score), True, GREEN)
+            text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime1)+len(self.enemyBKillTime1)+len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
+                                " of the " + str(self.numberEnemies*16) + " aliens you encountered, for a total score of {:.0f}".format(self.score + self.score1),
+                                True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])  
@@ -563,7 +571,7 @@ class Game(object):
                     font = pygame.font.Font(None, 20)
                     text = font.render("Teek", True, WHITE)
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
-                    screen.blit(text, [self.enemy.rect.x,self.enemy.rect.y+75])
+                    screen.blit(text, [self.enemy.rect.x,self.enemy.rect.y+80])
                     self.fontRenderTime+=1.0
                     if self.fontRenderTime>=self.fontRenderRemoval:
                         self.renderA = False
@@ -572,7 +580,7 @@ class Game(object):
                     font = pygame.font.Font(None, 20)
                     text = font.render("Strubble", True, WHITE)
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
-                    screen.blit(text, [self.enemy.rect.x, self.enemy.rect.y+75])
+                    screen.blit(text, [self.enemy.rect.x, self.enemy.rect.y+80])
                     self.fontRenderTime+=1.0
                     if self.fontRenderTime>=self.fontRenderRemoval:
                         self.renderB = False

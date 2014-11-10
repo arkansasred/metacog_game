@@ -8,15 +8,16 @@ from psychopy import core
     
          
 def main():
-    def checkData(SUBJECT):
-        if path.exists("/Subject %s"%SUBJECT):
-            SUBJECT = raw_input("Data already exists for that subject, Please choose a different subject number: ")
-            return checkData(SUBJECT)
-        return SUBJECT
-        print SUBJECT
+    def checkData(subj):
+        if path.exists("Subject %s"%subj):
+            subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+            return checkData(subj)
+        return subj
     
-    subject = checkData(SUBJECT = raw_input("Subject Number: "))
-    print subject
+    SUBJECT = checkData(subj = raw_input("Subject Number: "))
+    if not path.exists("Subject %s"%SUBJECT):
+        mkdir("Subject %s"%SUBJECT)
+        print "Making subject directory"
 
     """ Main program function. """
     # Initialize Pygame and set up the window
@@ -57,6 +58,8 @@ def main():
     
     if Game.VERSION==1:
         directory="Subject %s/PreTest/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
     elif Game.VERSION==2:
         directory="Subject %s/TrainingLabels/"%SUBJECT
     elif Game.VERSION==3:
@@ -64,6 +67,8 @@ def main():
     elif Game.VERSION == 4:
         directory = "Subject %s/PostTest/"%SUBJECT
 
+    print Game.enemyAKillTime1
+    print Game.enemyAKillTime
     shots = open(directory+"shots.txt", 'w')
     captures = open(directory+"captures.txt", 'w') # this is the capture 'attempt' timestamp
     AKills = open(directory+"Akills.txt", 'w')
@@ -106,8 +111,10 @@ def main():
         numberPrediction.write(str(prediction)+'\n')
     for prediction in Game.answer2Val:
         scorePrediction.write(str(prediction)+'\n')
-    scoreActual.write(str(Game.score1) + '\n'+str(Game.score))
-    numberActual.write(str(len(Game.enemyAKillTime1)+len(Game.enemyBKillTime1)+'\n'+str(len(Game.enemyAKillTime)+len(Game.enemyBKillTime))))
+    for answer in Game.answer1Actual:
+        numberActual.write(str(answer)+'\n')
+    for answer in Game.answer2Actual:
+        scoreActual.write(str(answer)+'\n')
 
 
     shots.close()
@@ -119,7 +126,7 @@ def main():
     AhitPlayer.close()
     BhitPlayer.close()
     numberPrediction.close()
-    scorePrediction.clost()
+    scorePrediction.close()
     sightsA.close()
     sightsB.close()
     scoreActual.close()
