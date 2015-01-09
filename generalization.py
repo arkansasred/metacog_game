@@ -21,11 +21,11 @@ checkData(SUBJECT)
 if not path.exists("Subject %s/Generalization"%SUBJECT):
 	mkdir("Subject %s/Generalization"%SUBJECT)
 
-win = visual.Window(monitor="testMonitor", units="deg", fullscr=True, allowGUI=False)
+win = visual.Window(monitor="testMonitor", units="deg", allowGUI=False)
 
-intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use buttons '1' and '2' to categorize the aliens as either 'Friendly' or 'Enemy'", wrapWidth=20)
+intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use buttons '1' and '2' to indicate whether you would 'Shoot' or 'Capture' the Aliens", wrapWidth=20)
 
-question = visual.TextStim(win, text="Was this alien a friend or Enemy?", color='Black', pos=(0,4), wrapWidth=20)
+question = visual.TextStim(win, text="Shoot or Capture?", color='Black', pos=(0,4), wrapWidth=20)
 answer = visual.TextStim(win, text="1								2", color='Black', pos=(0,-2), wrapWidth=20)
 reminder = visual.TextStim(win,text="  Friend 							  Enemy", color='Black', pos=(0,0),wrapWidth=20) 
 
@@ -56,7 +56,6 @@ familiarityRankings = open("Subject %s/Generalization/responses.txt"%SUBJECT, "w
 
 newPair = False
 aliens = False
-response = False
 start = True
 confidence = False
 
@@ -79,14 +78,8 @@ while True:
 		newPair = False
 		aliens = True
 
-	elif aliens and not response and not newPair:
+	elif aliens and not newPair and not confidence:
 		alien.draw()
-		win.flip()
-		core.wait(2)
-		response = True
-		aliens = False
-
-	elif response and not newPair and not aliens:
 		question.draw()
 		answer.draw()
 		reminder.draw()
@@ -95,16 +88,16 @@ while True:
 		responseKeys = event.waitKeys(keyList=['1','2'])
 		if len(responseKeys)>0:
 			alienResponse = (alienType, responseKeys.pop())
-			alienResponses.append(str(alienResponse))
+			alienResponses.extend(str(alienResponse))
 			"""if len(enemyCombinations)==0:
 				for response in responses:
 					familiarityRankings.write("%s \n"%response)
 				break"""
 			confidence = True
-			response = False
+			aliens = False
 		event.clearEvents()
 
-	elif confidence and not response and not aliens:
+	elif confidence and not newPair and not aliens:
 		confidenceReminder.draw()
 		confidenceQuestion.draw()
 		confidenceResponse.draw()

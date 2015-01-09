@@ -9,9 +9,22 @@ from psychopy import core
          
 def main():
     def checkData(subj):
-        if path.exists("Subject %s"%subj):
-            subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
-            return checkData(subj)
+        if Game.VERSION==1:
+            if path.exists("Subject %s/PreTest/"%subj):
+                subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+                return checkData(subj)
+        elif Game.VERSION==3:
+            if path.exists("Subject %s/TrainingLabels/"%subj):
+                subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+                return checkData(subj)
+        elif Game.VERSION==4:
+            if path.exists("Subject %s/TrainingNoLabels/"%subj):
+                subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+                return checkData(subj)
+        elif Game.VERSION==5:
+            if path.exists("Subject %s/PostTest/"%subj):
+                subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
+                return checkData(subj)
         return subj
     
     SUBJECT = checkData(subj = raw_input("Subject Number: "))
@@ -60,15 +73,21 @@ def main():
         directory="Subject %s/PreTest/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif Game.VERSION==2:
-        directory="Subject %s/TrainingLabels/"%SUBJECT
     elif Game.VERSION==3:
+        directory="Subject %s/TrainingLabels/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif Game.VERSION==4:
         directory = "Subject %s/TrainingNoLabels/"%SUBJECT
-    elif Game.VERSION == 4:
+        if not path.exists(directory):
+            mkdir(directory)
+    elif Game.VERSION == 5:
         directory = "Subject %s/PostTest/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
 
-    print Game.enemyAKillTime1
-    print Game.enemyAKillTime
+    print Game.answer1Val
+    print Game.answer2Val
     shots = open(directory+"shots.txt", 'w')
     captures = open(directory+"captures.txt", 'w') # this is the capture 'attempt' timestamp
     AKills = open(directory+"Akills.txt", 'w')

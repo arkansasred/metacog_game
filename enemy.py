@@ -28,6 +28,8 @@ class Enemy(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.targetReached = False
         self.enemy_type = enemy_type
+        self.foove = pyo.SfPlayer("Sounds/foove.wav")
+        self.crelch = pyo.SfPlayer("Sounds/crelch.wav")
         #self.env = pyo.Fader(fadein=.01,fadeout=.2, dur=0) #amplitude envelope to get rid of pops
         self.pop = pyo.SfPlayer("Sounds/kill.wav")#for when enemy dies
         if self.enemy_type == 'A1':
