@@ -23,7 +23,7 @@ if not path.exists("Subject %s/Generalization"%SUBJECT):
 
 win = visual.Window(monitor="testMonitor", units="deg", allowGUI=False)
 
-intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use buttons '1' and '2' to indicate whether you would 'Shoot' or 'Capture' the Aliens", wrapWidth=20)
+intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use buttons '1' and '2' to indicate whether you would 'Shoot' or 'Capture' the Aliens", wrapWidth=20, alignHoriz="center")
 
 question = visual.TextStim(win, text="Shoot or Capture?", color='Black', pos=(0,4), wrapWidth=20)
 answer = visual.TextStim(win, text="1								2", color='Black', pos=(0,-2), wrapWidth=20)
