@@ -13,9 +13,10 @@ import eztext
 """
 IMPORTANT, versions are as follows:
     1: pre-test
-    2:training with labels
-    3:training without labels
-    4: post-test
+    2:training with congruent labels
+    3:training with incongruent labels
+    4:training without labels
+    5: post-test
 
     familiarization game to be loaded seperately
 """
@@ -43,11 +44,11 @@ class Game(object):
     enemyB_list = None
 
     if VERSION == 1:
-        numberEnemies = 5
+        numberEnemies = 4
     elif VERSION == 2 or VERSION == 3 or VERSION == 4:
         numberEnemies = 8
     elif VERSION == 5:
-        numberEnemies = 5
+        numberEnemies = 4
     print VERSION
 
     #define all the enemies
@@ -317,11 +318,11 @@ class Game(object):
                 self.enemy_live = True
             
             if self.enemy_live:
-                #when enemy enters screen, decrease score
                 """ Record time right when enemy fully enters screen """
-                if 0<= self.enemy.rect.y<=SCREEN_HEIGHT or 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
+                if self.enemy.rect.y==0 or self.enemy.rect.y == SCREEN_HEIGHT or self.enemy.rect.x == 0 or self.enemy.rect.x == SCREEN_WIDTH:
                     self.sight = True
-                    self.sight=False
+                #when enemy enters screen, decrease score
+                if 0<= self.enemy.rect.y<=SCREEN_HEIGHT or 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
                     self.score -= 1/float(60) # decrease score by 1 for every second that enemy is alive
          
             
