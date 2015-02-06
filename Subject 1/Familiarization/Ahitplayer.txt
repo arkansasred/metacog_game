@@ -1,1 +1,1 @@
-<function getTime at 0x033E2B70>
+124.547805927

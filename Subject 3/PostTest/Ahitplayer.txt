@@ -1,11 +1,2 @@
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
-<function getTime at 0x0345ABB0>
+238.688137591
+276.011179817

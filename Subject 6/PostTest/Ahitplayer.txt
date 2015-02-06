@@ -1,12 +1,11 @@
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
+75.8550070109
+103.825897567
+111.412774455
+139.785285439
+147.441707306
+241.491338951
+249.941781112
+259.640725027
+368.845003404
+429.542247801
+550.403980131

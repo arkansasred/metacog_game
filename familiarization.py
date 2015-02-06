@@ -170,9 +170,6 @@ class Game(object):
                 
                 elif self.enemy_type=='B1' or self.enemy_type=='B2' or self.enemy_type=='B3' or self.enemy_type=='B4' or self.enemy_type=='B5' or self.enemy_type=='B6' or self.enemy_type=='B7' or self.enemy_type=='B8'or self.enemy_type=='B9' or self.enemy_type=='B10' or self.enemy_type=='B11' or self.enemy_type=='B12':
                     self.enemyB_list.add(self.enemy)
-                if len(self.enemies_list)<3 and len(self.enemies_list)%1==0:
-                    Enemy.speed+=1
-                    self.player.rotationSpeed+=1
                 self.enemy_live = True
             if self.enemy_live:
                 #when enemy enters screen, decrease score    

@@ -13,13 +13,13 @@ class Enemy(pygame.sprite.Sprite):
     enemyA_images = ["Images/Enemies/EnemyA/{0}".format(i) for i in enemyA_images if not i.startswith('.')]
     enemyB_images = listdir("Images/Enemies/EnemyB")
     enemyB_images = ["Images/Enemies/EnemyB/{0}".format(i) for i in enemyB_images if not i.startswith('.')]
-    offscreen_time = 1 #seconds before appearance
+    offscreen_time = 4 #seconds before appearance
     enemySightTime = []
     centerScreen = (SCREEN_WIDTH//2,SCREEN_HEIGHT//2)
     target = centerScreen
-    speed = 1.5
+    speed = 1.8
     targetReached = False
-    offsetTime = speed*FPS*offscreen_time #multiply by FPS for fps-->s
+    offsetTime = speed*FPS*offscreen_time #multiply by FPS for fps-->s (FPS should be 60 and in global_variables file)
     offset_points = [(-offsetTime,-offsetTime),(SCREEN_WIDTH//2, -offsetTime),(SCREEN_WIDTH+offsetTime,-offsetTime),
     (SCREEN_WIDTH+offsetTime,SCREEN_HEIGHT//2),(SCREEN_WIDTH+offsetTime, SCREEN_HEIGHT+offsetTime), 
     (SCREEN_WIDTH//2, SCREEN_HEIGHT+offsetTime), (-offsetTime, SCREEN_HEIGHT+offsetTime), (-offsetTime, SCREEN_HEIGHT//2)]
@@ -28,8 +28,8 @@ class Enemy(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.targetReached = False
         self.enemy_type = enemy_type
-        self.foove = pyo.SfPlayer("Sounds/foove.wav")
-        self.crelch = pyo.SfPlayer("Sounds/crelch.wav")
+        self.foove = pyo.SfPlayer("Sounds/foove.wav").mix(2)
+        self.crelch = pyo.SfPlayer("Sounds/crelch.wav").mix(2)
         #self.env = pyo.Fader(fadein=.01,fadeout=.2, dur=0) #amplitude envelope to get rid of pops
         self.pop = pyo.SfPlayer("Sounds/kill.wav")#for when enemy dies
         if self.enemy_type == 'A1':
@@ -140,7 +140,7 @@ class Enemy(pygame.sprite.Sprite):
             dist_x = abs(dist[0]) # gets absolute value of the x distance
             dist_y = abs(dist[1]) # gets absolute value of the y distance
             t_dist = dist_x + dist_y # gets total absolute value distance
-            speed = self.speed ** 2 # gets aboslute value of the speed
+            speed = abs(self.speed)/2 # gets aboslute value of the speed
             if t_dist < speed:
                 self.target = None
                 self.targetReached = True

@@ -27,7 +27,7 @@ class Game(object):
         class. """
  
     def whichVersion(version):
-        if int(version) >= 5:
+        if int(version) > 5:
             version = raw_input("Not a valid version, please input version number 1-5: ")
             return whichVersion(version)
         else:
@@ -44,11 +44,11 @@ class Game(object):
     enemyB_list = None
 
     if VERSION == 1:
-        numberEnemies = 4
+        numberEnemies = 5
     elif VERSION == 2 or VERSION == 3 or VERSION == 4:
         numberEnemies = 8
     elif VERSION == 5:
-        numberEnemies = 4
+        numberEnemies = 5
     print VERSION
 
     #define all the enemies
@@ -157,8 +157,8 @@ class Game(object):
         #explosion sound
         self.wrong_button = pyo.SfPlayer("Sounds/wrong_hit.wav")
         self.explosionSound = pyo.SfPlayer("Sounds/explosion.wav", speed=[1,1], mul=0.5)
-        self.env = pyo.Adsr(attack=.01, decay=.05, sustain=.2, release=.1, dur=.5, mul=.5)
-        self.bell = pyo.Sine(freq=[800,800], mul=self.env).out()
+        """self.env = pyo.Adsr(attack=.01, decay=.05, sustain=.2, release=.1, dur=.5, mul=.5)
+        self.bell = pyo.Sine(freq=[800,800], mul=self.env).out()"""
  
     def process_events(self):
         """ Process all of the events. Return a "True" if we need
@@ -275,15 +275,19 @@ class Game(object):
         if self.sight:
             time = core.getTime()
             if self.enemy_type[0]=='A':
-                self.enemyASightTime.appned(time)
+                self.enemyASightTime.append(time)
             elif self.enemy_type[0]=='B':
                 self.enemyBSightTime.append(time)
 
         if not self.game_start and not self.game_over and not self.halfway:
         # Create the enemy sprites
-            if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==60:
-                #play sound 1 second preceding alien spawn
-                if self.VERSION==2:
+            
+            if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
+                self.enemy_type = self.enemies_list.pop()
+                self.enemy = Enemy(self.enemy_type)
+                self.enemy.generate()
+                self.all_sprites_list.add(self.enemy)
+                """if self.VERSION==2:
                     if self.enemy_type[0] == 'A':
                         self.enemy.crelch.out()
                     elif self.enemy_type[0] == 'B':
@@ -295,13 +299,8 @@ class Game(object):
                         self.enemy.crelch.out()
                 elif self.VERSION == 4:
                     #play sine tone
-                    self.env.play()
-            
-            if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
-                self.enemy_type = self.enemies_list.pop()
-                self.enemy = Enemy(self.enemy_type)
-                self.enemy.generate()
-                self.all_sprites_list.add(self.enemy)
+                    self.env.play()"""
+                
                 if self.enemy_type[0]=='A':
                     self.enemyA_list.add(self.enemy)
                 
@@ -322,7 +321,7 @@ class Game(object):
                 if self.enemy.rect.y==0 or self.enemy.rect.y == SCREEN_HEIGHT or self.enemy.rect.x == 0 or self.enemy.rect.x == SCREEN_WIDTH:
                     self.sight = True
                 #when enemy enters screen, decrease score
-                if 0<= self.enemy.rect.y<=SCREEN_HEIGHT or 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
+                if 0<= self.enemy.rect.y<=SCREEN_HEIGHT and 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
                     self.score -= 1/float(60) # decrease score by 1 for every second that enemy is alive
          
             

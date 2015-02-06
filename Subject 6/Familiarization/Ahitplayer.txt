@@ -1,2 +1,2 @@
-139.350068147
-146.712281692
+<function getTime at 0x033EBB70>
+<function getTime at 0x033EBB70>

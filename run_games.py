@@ -37,7 +37,7 @@ def main():
     pygame.init()
     #start pyo sound, use lowest latency output
     s = pyo.Server(duplex=0)
-    #s.setOutputDevice(14)
+    s.setOutputDevice(14)
     s.boot()
     s.start()
     
@@ -73,8 +73,12 @@ def main():
         directory="Subject %s/PreTest/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
+    elif Game.VERSION==2:
+        directory="Subject %s/TrainingLabelsCongruent/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
     elif Game.VERSION==3:
-        directory="Subject %s/TrainingLabels/"%SUBJECT
+        directory = "Subject %s/TrainingNoLabelsIncongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
     elif Game.VERSION==4:
