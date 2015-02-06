@@ -1,2 +1,0 @@
-60.0000745623
-<function getTime at 0x033F5B70>
