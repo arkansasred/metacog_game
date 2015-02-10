@@ -463,11 +463,13 @@ class Game(object):
         if self.halfway:  
             font = pygame.font.Font(None, 25)
             text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d.  Hit space to continue"%(self.score),
+                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d."%(self.score),
                                 True, GREEN)
+            text3 = font.render("  Hit space to continue", True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])
+            screen.blit(text3, [SCREEN_WIDTH//2-text3.get_width()//2, center_y + text2.get_height()+2])
 
         elif self.game_start:
             font = pygame.font.Font(None, 25)
@@ -609,7 +611,7 @@ class Game(object):
                     font = pygame.font.Font(None, 20)
                     text = font.render("Crelch", True, WHITE)
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
-                    screen.blit(text, [self.enemy.rect.x+5,self.enemy.rect.y+80])
+                    screen.blit(text, [self.enemy.rect.x+text.get_height()+2, self.enemy.rect.y+85])
                     self.fontRenderTime+=1.0
                     if self.fontRenderTime>=self.fontRenderRemoval:
                         self.renderA = False
@@ -618,7 +620,7 @@ class Game(object):
                     font = pygame.font.Font(None, 20)
                     text = font.render("Foove", True, WHITE)
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
-                    screen.blit(text, [self.enemy.rect.x+5, self.enemy.rect.y+80])
+                    screen.blit(text, [self.enemy.rect.x+text.get_height()+2, self.enemy.rect.y+85])
                     self.fontRenderTime+=1.0
                     if self.fontRenderTime>=self.fontRenderRemoval:
                         self.renderB = False
@@ -629,7 +631,7 @@ class Game(object):
                     font = pygame.font.Font(None, 20)
                     text = font.render("Foove", True, WHITE)
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
-                    screen.blit(text, [self.enemy.rect.x+5,self.enemy.rect.y+80])
+                    screen.blit(text, [self.enemy.rect.x+text.get_height()+2, self.enemy.rect.y+85])
                     self.fontRenderTime+=1.0
                     if self.fontRenderTime>=self.fontRenderRemoval:
                         self.renderA = False
@@ -638,7 +640,7 @@ class Game(object):
                     font = pygame.font.Font(None, 20)
                     text = font.render("Crelch", True, WHITE)
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
-                    screen.blit(text, [self.enemy.rect.x+5, self.enemy.rect.y+80])
+                    screen.blit(text, [self.enemy.rect.x+text.get_height()+2, self.enemy.rect.y+85])
                     self.fontRenderTime+=1.0
                     if self.fontRenderTime>=self.fontRenderRemoval:
                         self.renderB = False
