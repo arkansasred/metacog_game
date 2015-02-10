@@ -52,22 +52,22 @@ class Game(object):
     print VERSION
 
     #define all the enemies
-    A1Enemies = ['A2' for i in range (numberEnemies)]
-    A2Enemies = ['A4' for i in range (numberEnemies)]
+    A1Enemies = ['A3' for i in range (numberEnemies)]
+    A2Enemies = ['A5' for i in range (numberEnemies)]
     A3Enemies = ['A7' for i in range (numberEnemies)]
     A4Enemies = ['A8' for i in range (numberEnemies)]
     A5Enemies = ['A9' for i in range (numberEnemies)]
-    A6Enemies = ['A10' for i in range (numberEnemies)]
+    A6Enemies = ['A2' for i in range (numberEnemies)]
     A7Enemies = ['A11' for i in range (numberEnemies)]
-    A8Enemies = ['A12' for i in range (numberEnemies)]
+    A8Enemies = ['A1' for i in range (numberEnemies)]
     B1Enemies = ['B1' for i in range(numberEnemies)]
     B2Enemies = ['B2' for i in range(numberEnemies)]
-    B3Enemies = ['B7' for i in range(numberEnemies)]
-    B4Enemies = ['B8' for i in range(numberEnemies)]
-    B5Enemies = ['B9' for i in range(numberEnemies)]
-    B6Enemies = ['B10' for i in range(numberEnemies)]
-    B7Enemies = ['B11' for i in range(numberEnemies)]
-    B8Enemies = ['B12' for i in range(numberEnemies)]
+    B3Enemies = ['B3' for i in range(numberEnemies)]
+    B4Enemies = ['B4' for i in range(numberEnemies)]
+    B5Enemies = ['B5' for i in range(numberEnemies)]
+    B6Enemies = ['B6' for i in range(numberEnemies)]
+    B7Enemies = ['B7' for i in range(numberEnemies)]
+    B8Enemies = ['B10' for i in range(numberEnemies)]
 
     enemies_list = A1Enemies + A2Enemies + A3Enemies + A4Enemies + A5Enemies + A6Enemies + A7Enemies + A8Enemies + B1Enemies + B2Enemies + B3Enemies + B4Enemies + B5Enemies + B6Enemies + B7Enemies + B8Enemies
     bullet_list = None
@@ -148,7 +148,7 @@ class Game(object):
         self.bullet_list = pygame.sprite.Group()
 
         self.q1=eztext.Input(x=10, y=SCREEN_HEIGHT//2, font = pygame.font.Font(None,28), maxlength=45, color=GREEN, prompt='For the next series of %s Aliens, how many do you think you will successfully shoot or capture?:  '%(self.numberEnemies*8))
-        self.q2=eztext.Input(x=SCREEN_WIDTH//2-400, y=SCREEN_HEIGHT//2, maxlength=45,color=GREEN,prompt="What do you think your score will be for this segment of the game?:  ")          
+        self.q2=eztext.Input(x=SCREEN_WIDTH//2-400, y=SCREEN_HEIGHT//2, maxlength=45,color=GREEN,prompt="What do you think your score will be for this segment of the game?:  ")
          
         # Create the player
         self.player = Player()
@@ -517,10 +517,10 @@ class Game(object):
             font = pygame.font.Font(None, 15)
             score = font.render('Score: %s'%"{:,.0f}".format(self.score), True, RED)
             ammo = font.render('Ammo: %d'%self.ammo, True, YELLOW)
-            x_pos = 6
+            x_pos = SCREEN_WIDTH//4
             """screen.blit(lives, [x_pos, lives.get_height()])"""
-            screen.blit(score, [x_pos, score.get_height()])
-            screen.blit(ammo, [x_pos, score.get_height()+ammo.get_height()])
+            screen.blit(score, [x_pos, SCREEN_HEIGHT-(score.get_height()+ammo.get_height())])
+            screen.blit(ammo, [x_pos, SCREEN_HEIGHT-(ammo.get_height())])
             if self.isExplosion_center:
                 """animate the explosion"""
                 pos = (SCREEN_WIDTH//2-20,SCREEN_HEIGHT//2-20)

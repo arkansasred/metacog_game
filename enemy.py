@@ -17,12 +17,13 @@ class Enemy(pygame.sprite.Sprite):
     enemySightTime = []
     centerScreen = (SCREEN_WIDTH//2,SCREEN_HEIGHT//2)
     target = centerScreen
-    speed = 1.8
+    speed = 1
     targetReached = False
     offsetTime = speed*FPS*offscreen_time #multiply by FPS for fps-->s (FPS should be 60 and in global_variables file)
     offset_points = [(-offsetTime,-offsetTime),(SCREEN_WIDTH//2, -offsetTime),(SCREEN_WIDTH+offsetTime,-offsetTime),
     (SCREEN_WIDTH+offsetTime,SCREEN_HEIGHT//2),(SCREEN_WIDTH+offsetTime, SCREEN_HEIGHT+offsetTime), 
     (SCREEN_WIDTH//2, SCREEN_HEIGHT+offsetTime), (-offsetTime, SCREEN_HEIGHT+offsetTime), (-offsetTime, SCREEN_HEIGHT//2)]
+
     def __init__(self, enemy_type):
         """ Constructor, create the image of the enemy/sound for enemy. Selected from three enemy types """
         pygame.sprite.Sprite.__init__(self)
@@ -104,7 +105,7 @@ class Enemy(pygame.sprite.Sprite):
         elif self.enemy_type == 'B12':
             self.image = pygame.image.load(self.enemyB_images[11])
             
-        self.image = pygame.transform.smoothscale(self.image, (80,80))
+        self.image = pygame.transform.smoothscale(self.image, (85,85))
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
 
@@ -135,12 +136,12 @@ class Enemy(pygame.sprite.Sprite):
             targ = Vector(self.target[0],self.target[1]) # and one from the target x,y
             dist = targ - position # get total distance between target and position
             direction = dist.normalize() # normalize so its constant in all directions
-            self.rect.x += (direction[0] * self.speed) # calculate speed from direction to move and speed constant
-            self.rect.y += (direction[1] * self.speed)
+            self.rect.x += (round(direction[0]) * self.speed) # calculate speed from direction to move and speed constant, rounding debugs the diagonal vectors
+            self.rect.y += (round(direction[1]) * self.speed)
             dist_x = abs(dist[0]) # gets absolute value of the x distance
             dist_y = abs(dist[1]) # gets absolute value of the y distance
             t_dist = dist_x + dist_y # gets total absolute value distance
-            speed = abs(self.speed)/2 # gets aboslute value of the speed
-            if t_dist < speed:
+            speed = abs(self.speed) # gets aboslute value of the speed
+            if t_dist < speed//2:
                 self.target = None
                 self.targetReached = True
