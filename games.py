@@ -44,11 +44,11 @@ class Game(object):
     enemyB_list = None
 
     if VERSION == 1:
-        numberEnemies = 5
+        numberEnemies = 4
     elif VERSION == 2 or VERSION == 3 or VERSION == 4:
-        numberEnemies = 8
+        numberEnemies = 10
     elif VERSION == 5:
-        numberEnemies = 5
+        numberEnemies = 4
     print VERSION
 
     #define all the enemies
@@ -222,7 +222,7 @@ class Game(object):
                         self.halfway = False
                         self.getMetacogEval = True
                         self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
-                        self.answer2Actual.append(self.score)
+                        self.answer2Actual.append(round(self.score))
                         self.enemyAKillTime1.extend(self.enemyAKillTime)
                         del self.enemyAKillTime[:]
                         self.enemyBKillTime1.extend(self.enemyBKillTime)
@@ -445,7 +445,7 @@ class Game(object):
             """define end of level"""
             if len(self.enemies_list)==0 and not self.enemy_live:
                 self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
-                self.answer2Actual.append(self.score)
+                self.answer2Actual.append(round(self.score))
                 self.game_over = True
 
                  

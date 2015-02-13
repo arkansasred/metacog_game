@@ -5,6 +5,7 @@ import pyo
 from global_variables import *
 from enemy import Enemy
 from psychopy import core
+from sys import platform
     
          
 def main():
@@ -34,10 +35,16 @@ def main():
 
     """ Main program function. """
     # Initialize Pygame and set up the window
-    pygame.init()
+    pygame.display.init()
+    pygame.font.init()
     #start pyo sound, use lowest latency output
-    s = pyo.Server(duplex=0)
-    s.setOutputDevice(14)
+    if platform == "linux2":
+        s = pyo.Server(audio = 'jack')
+    elif platform == "win64" or platform == "win32":
+        s = pyo.Server(duplex=0)
+        s.setOutputDevice(14)
+    else:
+        s = pyo.Server()
     s.boot()
     s.start()
     
