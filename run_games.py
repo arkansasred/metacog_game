@@ -6,6 +6,7 @@ from global_variables import *
 from enemy import Enemy
 from psychopy import core
 from sys import platform
+import pandas as pd
     
          
 def main():
@@ -75,29 +76,15 @@ def main():
          
         # Pause for the next frame
         clock.tick(FPS)
-    
-    if Game.VERSION==1:
-        directory="Subject %s/PreTest/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif Game.VERSION==2:
-        directory="Subject %s/TrainingLabelsCongruent/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif Game.VERSION==3:
-        directory = "Subject %s/TrainingNoLabelsIncongruent/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif Game.VERSION==4:
-        directory = "Subject %s/TrainingNoLabels/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif Game.VERSION == 5:
-        directory = "Subject %s/PostTest/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
 
-    print Game.answer1Val
+    print(Game.blockData)
+    print(Game.predictionData)
+    general = pd.DataFrame(Game.blockData)
+    predictions = pd.DataFrame(Game.predictionData)
+    general.to_csv('generalData.csv')
+    predictions.to_csv('predictionData.csv')
+
+    """print Game.answer1Val
     print Game.answer2Val
     shots = open(directory+"shots.txt", 'w')
     captures = open(directory+"captures.txt", 'w') # this is the capture 'attempt' timestamp
@@ -160,7 +147,7 @@ def main():
     sightsA.close()
     sightsB.close()
     scoreActual.close()
-    numberActual.close()
+    numberActual.close()"""
 
     #shut down pyo server
     s.stop()

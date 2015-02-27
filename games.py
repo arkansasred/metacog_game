@@ -8,6 +8,7 @@ from player import Player
 from global_variables import *
 from random import shuffle, randrange
 import eztext
+import pandas as pd
 
 
 """
@@ -33,6 +34,8 @@ class Game(object):
         else:
             return version
 
+    CONDITION = raw_input("Conditon (1 or 2): ")
+
 
     VERSION = whichVersion(version = int(raw_input("Version number (1-5): ")))
 
@@ -44,12 +47,34 @@ class Game(object):
     enemyB_list = None
 
     if VERSION == 1:
-        numberEnemies = 4
+        numberEnemies = 1
     elif VERSION == 2 or VERSION == 3 or VERSION == 4:
         numberEnemies = 10
     elif VERSION == 5:
         numberEnemies = 4
     print VERSION
+
+    
+    """if VERSION==1:
+        directory="Subject %s/PreTest/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif VERSION==2:
+        directory="Subject %s/TrainingLabelsCongruent/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif VERSION==3:
+        directory = "Subject %s/TrainingNoLabelsIncongruent/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif VERSION==4:
+        directory = "Subject %s/TrainingNoLabels/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif VERSION == 5:
+        directory = "Subject %s/PostTest/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)"""
 
     #define all the enemies
     A1Enemies = ['A3' for i in range (numberEnemies)]
@@ -74,24 +99,6 @@ class Game(object):
     all_sprites_list = None
     player = None
     #Time measurements
-    shotTime = []
-    captureTime = []
-    enemyAKillTime = []
-    enemyBKillTime = []
-    #will be used to store "kill" time measurements for 1st half of game (kill refers to both kill/capture)
-    enemyAKillTime1 = []
-    enemyBKillTime1 = []
-    enemyAWrongHitTime = []
-    enemyBWrongHitTime = []
-    answer1Val= []
-    answer2Val= []
-    answer1Actual = []
-    answer2Actual = []
-    #record when player does not hit the enemy at all (enemy hits player)
-    enemyAHitPlayerTime = []
-    enemyBHitPlayerTime = []
-    enemyASightTime = []
-    enemyBSightTime = []
     enemy_live = False #bool to tell us if there is a live enemy
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
@@ -127,19 +134,25 @@ class Game(object):
     getMetacogEval = False
     answer1 = True
     sight = False
-    halfway=False #elicit another prospective assesment at halfway point
+    newBlock = False #elicit prospective assesment at each block
+    enemiesPerBlock = 8
     previousKill= False #helps keep track of whether previous trial was successful
-    score = None
-    score1 = None
+    blockCount = 1
+    #dicts that we can turn in to data frames for efficient data storage
+    blockData = {'Conditon': CONDITION, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
+    predictionData = {'Block': [1], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
     # --- Class methods
     # Set up the game
     def __init__(self):
         shuffle(self.enemies_list)
         shuffle(self.enemies_list)
-        self.score = 0
+        self.blockScore = 0
+        self.blockSuccesses = 0
         self.game_over = False
         self.game_start = True
+
+        self.t = core.Clock()
          
         # Create sprite lists
         self.enemyA_list = pygame.sprite.Group()
@@ -147,7 +160,7 @@ class Game(object):
         self.all_sprites_list = pygame.sprite.Group()
         self.bullet_list = pygame.sprite.Group()
 
-        self.q1=eztext.Input(x=10, y=SCREEN_HEIGHT//2, font = pygame.font.Font(None,28), maxlength=45, color=GREEN, prompt='For the next series of %s Aliens, how many do you think you will successfully shoot or capture?:  '%(self.numberEnemies*8))
+        self.q1=eztext.Input(x=10, y=SCREEN_HEIGHT//2, font = pygame.font.Font(None,28), maxlength=45, color=GREEN, prompt='For the next series of %s Aliens, how many do you think you will successfully shoot or capture?:  '%(self.enemiesPerBlock))
         self.q2=eztext.Input(x=SCREEN_WIDTH//2-400, y=SCREEN_HEIGHT//2, maxlength=45,color=GREEN,prompt="What do you think your score will be for this segment of the game?:  ")
          
         # Create the player
@@ -175,8 +188,6 @@ class Game(object):
                 self.ammo-=1
                 # Add the bullet to the lists
                 self.all_sprites_list.add(self.bullet)
-                shot = core.getTime()
-                self.shotTime.append(shot)
                 self.bullet_list.add(self.bullet)
             
             else:
@@ -200,13 +211,13 @@ class Game(object):
                         """log the estimate in the answer1Val list, go to second question"""
                         estimate=self.q1.value
                         print estimate
-                        self.answer1Val.append(estimate)
+                        self.predictionData['NumberPrediction'].append(estimate)
                         self.q1.value=""
                         self.answer1=False
                     elif self.getMetacogEval and not self.answer1:
                         """next question"""
                         estimate=self.q2.value
-                        self.answer2Val.append(estimate)
+                        self.predictionData['ScorePrediction'].append(estimate)
                         self.q2.value=""
                         self.getMetacogEval=False
                         self.answer1=True
@@ -217,22 +228,19 @@ class Game(object):
                     if self.game_start:
                         self.game_start = False
                         self.getMetacogEval=True
-                    elif self.halfway:
-                        #record then reset score, record, same for the enemy kill times
-                        self.halfway = False
+                    elif self.newBlock:
+                        #blockFile = "block"+str(blockCount)+".txt"
+                        #record then reset score, etc.
+                        self.newBlock = False
                         self.getMetacogEval = True
-                        self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
-                        self.answer2Actual.append(round(self.score))
-                        self.enemyAKillTime1.extend(self.enemyAKillTime)
-                        del self.enemyAKillTime[:]
-                        self.enemyBKillTime1.extend(self.enemyBKillTime)
-                        del self.enemyBKillTime[:]
-                        self.score1 = self.score
-                        self.score = 0
+                        self.blockCount += 1
+                        self.predictionData['Block'].append(self.blockCount)
+                        self.predictionData['NumberActual'].append(self.blockSuccesses)
+                        self.predictionData['ScoreActual'].append(round(self.blockScore))
+                        self.blockScore = 0
+                        self.blockSuccesses = 0
                     else: 
                         self.player.capture()
-                        capture = core.getTime()
-                        self.captureTime.append(capture)
                 elif event.key == pygame.K_ESCAPE:
                     return True
             elif event.type == pygame.KEYUP:
@@ -253,37 +261,37 @@ class Game(object):
 
         def kill_enemy(enemy_type):
             font = pygame.font.Font(None, 25)
-            time = core.getTime()
+            RT = self.t.getTime()
+            self.blockData['TotalTime'].append(RT)
+            self.blockData['Success'].append(1)
+            self.blockData['EnemyHitPlayer'].append(0)
+            self.blockData['Block'].append(self.blockCount)
+            self.blockSuccesses += 1
             if enemy_type=='A':
-                self.enemyAKillTime.append(time)
                 if self.VERSION==2 or self.VERSION == 3:
                     self.renderA = True
                 elif self.VERSION==4:
                     self.render = True
             elif enemy_type=='B':
-                self.enemyBKillTime.append(time)
                 if self.VERSION==2 or self.VERSION == 3:
                     self.renderB = True
                 elif self.VERSION==4:
                     self.render = True
             self.enemy.pop.out()
-            self.score += 20
+            self.blockScore += 20
             self.elapsedTime = 0
             self.enemy_live = False
             self.previousKill = True
 
         if self.sight:
-            time = core.getTime()
-            if self.enemy_type[0]=='A':
-                self.enemyASightTime.append(time)
-            elif self.enemy_type[0]=='B':
-                self.enemyBSightTime.append(time)
+            self.t.reset()
 
-        if not self.game_start and not self.game_over and not self.halfway:
+        if not self.game_start and not self.game_over and not self.newBlock:
         # Create the enemy sprites
             
             if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
                 self.enemy_type = self.enemies_list.pop()
+                self.blockData["EnemyType"].append(self.enemy_type)
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
                 self.all_sprites_list.add(self.enemy)
@@ -307,9 +315,9 @@ class Game(object):
                 elif self.enemy_type[0]=='B':
                     self.enemyB_list.add(self.enemy)
 
-                """for every 20 enemies killed/captured, increase speed"""
+                """for every number enemies killed/captured that is 1/4th of total enemies, increase speed"""
 
-                if len(self.enemies_list)<(self.numberEnemies*16-1) and self.previousKill and (len(self.enemyAKillTime)+len(self.enemyBKillTime))%(self.numberEnemies*4) == 0:
+                if len(self.enemies_list)<(self.numberEnemies*16-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberEnemies*4)) == 0:
                     self.player.rotationSpeed+=1
                     Enemy.speed+=1
                     self.player.speed+=1
@@ -322,7 +330,7 @@ class Game(object):
                     self.sight = True
                 #when enemy enters screen, decrease score
                 if 0<= self.enemy.rect.y<=SCREEN_HEIGHT and 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
-                    self.score -= 1/float(60) # decrease score by 1 for every second that enemy is alive
+                    self.blockScore -= 1/float(60) # decrease score by 1 for every second that enemy is alive
          
             
             # Move all the sprites
@@ -346,10 +354,13 @@ class Game(object):
                     self.all_sprites_list.remove(bullet)
                 """give audio feedback if wrong sprite shot"""
                 if pygame.sprite.spritecollide(bullet, self.enemyB_list, True):
-                    time = core.getTime()
-                    self.enemyBWrongHitTime.append(time)
+                    RT = self.t.getTime()
+                    self.blockData['TotalTime'].append(RT)
+                    self.blockData['Success'].append(0)
+                    self.blockData['EnemyHitPlayer'].append(0)
+                    self.blockData['Block'].append(self.blockCount)
                     self.enemy.wrong_hit()
-                    self.score -= 10
+                    self.blockScore -= 10
                     self.isExplosion_enemy = True
                     self.elapsedTime = 0
                     self.enemy_live = False
@@ -365,11 +376,14 @@ class Game(object):
 
             if self.player.atCenter:
                 if pygame.sprite.spritecollide(self.player, self.enemyB_list, True):
-                    time = core.getTime()
-                    self.enemyBHitPlayerTime.append(time)
+                    RT = self.t.getTime()
+                    self.blockData['TotalTime'].append(RT)
+                    self.blockData['Success'].append(0)
+                    self.blockData['EnemyHitPlayer'].append(1)
+                    self.blockData['Block'].append(self.blockCount)
                     self.enemy_live = False
                     self.elapsedTime = 0
-                    self.score -= 20
+                    self.blockScore -= 20
                     self.enemy.wrong_hit()
                     if self.VERSION==2 or self.VERSION == 3:
                         self.renderB = True
@@ -378,11 +392,14 @@ class Game(object):
                     self.previousKill=False
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
-                    time = core.getTime()
-                    self.enemyAHitPlayerTime.append(time)
+                    RT = self.t.getTime()
+                    self.blockData['TotalTime'].append(RT)
+                    self.blockData['Success'].append(0)
+                    self.blockData['EnemyHitPlayer'].append(1)
+                    self.blockData['Block'].append(self.blockCount)
                     self.enemy_live = False
                     self.elapsedTime = 0
-                    self.score -= 20
+                    self.blockScore -= 20
                     self.isExplosion_center=True
                     self.explosionSound.out()
                     if self.VERSION==2 or self.VERSION == 3:
@@ -398,12 +415,15 @@ class Game(object):
                         kill_enemy('B')
                         self.player.targetReached = True
                     else:
-                        time = core.getTime()
-                        self.enemyBHitPlayerTime.append(time)
+                        RT = self.t.getTime()
+                        self.blockData['TotalTime'].append(RT)
+                        self.blockData['Success'].append(0)
+                        self.blockData['EnemyHitPlayer'].append(1)
+                        self.blockData['Block'].append(self.blockCount)
                         self.enemy_live = False
                         self.enemy.wrong_hit()
                         self.elapsedTime = 0
-                        self.score -= 20
+                        self.blockScore -= 20
                         if self.VERSION==2 or self.VERSION == 3:
                             self.renderB=True
                         elif self.VERSION==4:
@@ -412,12 +432,15 @@ class Game(object):
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
                     if not self.enemy.targetReached:
-                        time = core.getTime()
-                        self.enemyAHitPlayerTime.append(time)
+                        RT = self.t.getTime()
+                        self.blockData['TotalTime'].append(RT)
+                        self.blockData['Success'].append(0)
+                        self.blockData['EnemyHitPlayer'].append(0)
+                        self.blockData['Block'].append(self.blockCount)      
                         self.enemy.wrong_hit()
                         self.enemy_live = False
                         self.elapsedTime = 0
-                        self.score -= 10
+                        self.blockScore -= 10
                         self.isExplosion_enemy=True
                         self.player.targetReached=True
                         if self.VERSION==2 or self.VERSION == 3:
@@ -426,10 +449,13 @@ class Game(object):
                             self.render = True
                         self.previousKill=False
                     else:
-                        time = core.getTime()
-                        self.enemyAWrongHitTime.append(time)
+                        RT = self.t.getTime()
+                        self.blockData['TotalTime'].append(RT)
+                        self.blockData['Success'].append(0)
+                        self.blockData['EnemyHitPlayer'].append(1)
+                        self.blockData['Block'].append(self.blockCount)
                         self.explosionSound.out()
-                        self.score -= 20
+                        self.blockScore -= 20
                         self.isExplosion_player = True
                         self.elapsedTime = 0
                         self.enemy_live = False
@@ -439,13 +465,13 @@ class Game(object):
                             self.render = True
                         self.previousKill=False
 
-            if len(self.enemies_list)==(self.numberEnemies*16)//2 and self.elapsedTime==0:
-                self.halfway = True
+            if len(self.enemies_list)!=0 and (len(self.enemies_list)%self.enemiesPerBlock==0) and self.elapsedTime==0:
+                self.newBlock = True
 
-            """define end of level"""
+            """define end of game"""
             if len(self.enemies_list)==0 and not self.enemy_live:
-                self.answer1Actual.append(str(len(self.enemyAKillTime)+len(self.enemyBKillTime)))
-                self.answer2Actual.append(round(self.score))
+                self.predictionData['NumberActual'].append(self.blockSuccesses)
+                self.predictionData['ScoreActual'].append(round(self.blockScore))
                 self.game_over = True
 
                  
@@ -460,10 +486,10 @@ class Game(object):
             center_y = (SCREEN_HEIGHT // 2) - (text.get_height() // 2) + spacing
             screen.blit(text, [center_x,center_y])
 
-        if self.halfway:  
+        if self.newBlock:  
             font = pygame.font.Font(None, 25)
-            text2 = font.render("You successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d."%(self.score),
+            text2 = font.render("You successfully killed or captured a total of "+ str(self.blockSuccesses) +
+                                " of the " + str(self.enemiesPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
                                 True, GREEN)
             text3 = font.render("  Hit space to continue", True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
@@ -498,14 +524,14 @@ class Game(object):
         elif self.game_over:  
             font = pygame.font.Font(None, 18)
             font2 = pygame.font.Font(None, 25)
-            text2 = font.render("For the second half of the game, you successfully killed or captured a total of "+ str(len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " of the " + str(self.numberEnemies*8) + " aliens you encountered, for a score of %d."%(self.score),
+            text2 = font.render("You just successfully killed or captured a total of "+ str(self.blockSuccesses) +
+                                " of the " + str(self.enemiesPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])
-            text3 = font2.render("Overall, you successfully killed or captured a total of "+ str(len(self.enemyAKillTime1)+len(self.enemyBKillTime1)+len(self.enemyAKillTime)+len(self.enemyBKillTime)) +
-                                " of the " + str(self.numberEnemies*16) + " aliens you encountered, for a total score of {:.0f}".format(self.score + self.score1),
+            text3 = font2.render("Overall, you successfully killed or captured a total of "+ str(sum(self.blockData['Success'])) +
+                                " of the " + str(self.numberEnemies*16) + " aliens you encountered, for a total score of {:.0f}".format(sum(self.predictionData["ScoreActual"])),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text3.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text3.get_height() // 2) + 40
@@ -517,7 +543,7 @@ class Game(object):
             self.all_sprites_list.draw(screen)
             screen.blit(self.player.rotated,self.player.rect)
             font = pygame.font.Font(None, 15)
-            score = font.render('Score: %s'%"{:,.0f}".format(self.score), True, RED)
+            score = font.render('Score: %s'%"{:,.0f}".format(self.blockScore), True, RED)
             ammo = font.render('Ammo: %d'%self.ammo, True, YELLOW)
             x_pos = SCREEN_WIDTH//4
             """screen.blit(lives, [x_pos, lives.get_height()])"""
