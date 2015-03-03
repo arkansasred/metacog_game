@@ -47,34 +47,13 @@ class Game(object):
     enemyB_list = None
 
     if VERSION == 1:
-        numberEnemies = 1
+        numberEnemies = 4
     elif VERSION == 2 or VERSION == 3 or VERSION == 4:
         numberEnemies = 10
     elif VERSION == 5:
         numberEnemies = 4
     print VERSION
 
-    
-    """if VERSION==1:
-        directory="Subject %s/PreTest/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif VERSION==2:
-        directory="Subject %s/TrainingLabelsCongruent/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif VERSION==3:
-        directory = "Subject %s/TrainingNoLabelsIncongruent/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif VERSION==4:
-        directory = "Subject %s/TrainingNoLabels/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif VERSION == 5:
-        directory = "Subject %s/PostTest/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)"""
 
     #define all the enemies
     A1Enemies = ['A3' for i in range (numberEnemies)]
@@ -135,7 +114,7 @@ class Game(object):
     answer1 = True
     sight = False
     newBlock = False #elicit prospective assesment at each block
-    enemiesPerBlock = 8
+    enemiesPerBlock = 20
     previousKill= False #helps keep track of whether previous trial was successful
     blockCount = 1
     #dicts that we can turn in to data frames for efficient data storage
@@ -170,8 +149,8 @@ class Game(object):
         #explosion sound
         self.wrong_button = pyo.SfPlayer("Sounds/wrong_hit.wav")
         self.explosionSound = pyo.SfPlayer("Sounds/explosion.wav", speed=[1,1], mul=0.5)
-        """self.env = pyo.Adsr(attack=.01, decay=.05, sustain=.2, release=.1, dur=.5, mul=.5)
-        self.bell = pyo.Sine(freq=[800,800], mul=self.env).out()"""
+        self.env = pyo.Adsr(attack=.01, decay=.05, sustain=.2, release=.1, dur=.5, mul=.5)
+        self.bell = pyo.Sine(freq=[800,800], mul=self.env).out()
  
     def process_events(self):
         """ Process all of the events. Return a "True" if we need
@@ -258,7 +237,26 @@ class Game(object):
         """
 
 
-
+        def post_mortem():
+            if self.VERSION==2:
+                if self.enemy_type[0] == 'A':
+                    self.enemy.crelch.out()
+                    self.renderA = True
+                elif self.enemy_type[0] == 'B':
+                    self.enemy.foove.out()
+                    self.renderB = True
+            elif self.VERSION == 3:
+                if self.enemy_type[0] == 'A':
+                    self.enemy.foove.out()
+                    self.renderA = True
+                elif self.enemy_type[0] == 'B':
+                    self.enemy.crelch.out()
+                    self.renderB = True
+            elif self.VERSION == 4:
+                #play sine tone
+                self.env.play()
+                self.render = True
+        
         def kill_enemy(enemy_type):
             font = pygame.font.Font(None, 25)
             RT = self.t.getTime()
@@ -267,16 +265,7 @@ class Game(object):
             self.blockData['EnemyHitPlayer'].append(0)
             self.blockData['Block'].append(self.blockCount)
             self.blockSuccesses += 1
-            if enemy_type=='A':
-                if self.VERSION==2 or self.VERSION == 3:
-                    self.renderA = True
-                elif self.VERSION==4:
-                    self.render = True
-            elif enemy_type=='B':
-                if self.VERSION==2 or self.VERSION == 3:
-                    self.renderB = True
-                elif self.VERSION==4:
-                    self.render = True
+            post_mortem()
             self.enemy.pop.out()
             self.blockScore += 20
             self.elapsedTime = 0
@@ -295,19 +284,6 @@ class Game(object):
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
                 self.all_sprites_list.add(self.enemy)
-                """if self.VERSION==2:
-                    if self.enemy_type[0] == 'A':
-                        self.enemy.crelch.out()
-                    elif self.enemy_type[0] == 'B':
-                        self.enemy.foove.out()
-                elif self.VERSION == 3:
-                    if self.enemy_type[0] == 'A':
-                        self.enemy.foove.out()
-                    elif self.enemy_type[0] == 'B':
-                        self.enemy.crelch.out()
-                elif self.VERSION == 4:
-                    #play sine tone
-                    self.env.play()"""
                 
                 if self.enemy_type[0]=='A':
                     self.enemyA_list.add(self.enemy)
@@ -366,10 +342,7 @@ class Game(object):
                     self.enemy_live = False
                     self.bullet_list.remove(bullet)
                     self.all_sprites_list.remove(bullet)
-                    if self.VERSION==2 or self.VERSION == 3:
-                        self.renderB = True
-                    elif self.VERSION==4:
-                        self.render = True
+                    post_mortem()
                     self.previousKill=False
             
  
@@ -385,10 +358,7 @@ class Game(object):
                     self.elapsedTime = 0
                     self.blockScore -= 20
                     self.enemy.wrong_hit()
-                    if self.VERSION==2 or self.VERSION == 3:
-                        self.renderB = True
-                    elif self.VERSION==4:
-                        self.render = True
+                    post_mortem()
                     self.previousKill=False
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
@@ -402,10 +372,7 @@ class Game(object):
                     self.blockScore -= 20
                     self.isExplosion_center=True
                     self.explosionSound.out()
-                    if self.VERSION==2 or self.VERSION == 3:
-                        self.renderA=True
-                    elif self.VERSION==4:
-                        self.render = True
+                    post_mortem()
                     self.previousKill=False
             
             elif not self.player.atCenter and self.enemy_live:
@@ -424,10 +391,7 @@ class Game(object):
                         self.enemy.wrong_hit()
                         self.elapsedTime = 0
                         self.blockScore -= 20
-                        if self.VERSION==2 or self.VERSION == 3:
-                            self.renderB=True
-                        elif self.VERSION==4:
-                            self.render = True
+                        post_mortem()
                         self.previousKill=False
                 
                 if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
@@ -443,10 +407,7 @@ class Game(object):
                         self.blockScore -= 10
                         self.isExplosion_enemy=True
                         self.player.targetReached=True
-                        if self.VERSION==2 or self.VERSION == 3:
-                            self.renderA=True
-                        elif self.VERSION==4:
-                            self.render = True
+                        post_mortem()
                         self.previousKill=False
                     else:
                         RT = self.t.getTime()
@@ -459,10 +420,7 @@ class Game(object):
                         self.isExplosion_player = True
                         self.elapsedTime = 0
                         self.enemy_live = False
-                        if self.VERSION==2 or self.VERSION == 3:
-                            self.renderA=True
-                        elif self.VERSION==4:
-                            self.render = True
+                        post_mortem()
                         self.previousKill=False
 
             if len(self.enemies_list)!=0 and (len(self.enemies_list)%self.enemiesPerBlock==0) and self.elapsedTime==0:

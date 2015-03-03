@@ -77,12 +77,30 @@ def main():
         # Pause for the next frame
         clock.tick(FPS)
 
-    print(Game.blockData)
-    print(Game.predictionData)
+    if Game.VERSION==1:
+        directory="Subject %s/PreTest/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif Game.VERSION==2:
+        directory="Subject %s/TrainingLabelsCongruent/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif Game.VERSION==3:
+        directory = "Subject %s/TrainingNoLabelsIncongruent/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif Game.VERSION==4:
+        directory = "Subject %s/TrainingNoLabels/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
+    elif Game.VERSION == 5:
+        directory = "Subject %s/PostTest/"%SUBJECT
+        if not path.exists(directory):
+            mkdir(directory)
     general = pd.DataFrame(Game.blockData)
     predictions = pd.DataFrame(Game.predictionData)
-    general.to_csv('generalData.csv')
-    predictions.to_csv('predictionData.csv')
+    general.to_csv(directory+'generalData.csv')
+    predictions.to_csv(directory+'predictionData.csv')
 
     """print Game.answer1Val
     print Game.answer2Val
