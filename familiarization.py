@@ -18,7 +18,7 @@ class Game(object):
     # Sprite lists
     enemyA_list = None
     enemyB_list = None
-    numberEnemies = 1 #number of enemies for each group
+    numberEnemies = 4 #number of enemies for each group
     A1Enemies = ['A10' for i in range (numberEnemies)]
     A2Enemies = ['A11' for i in range (numberEnemies)]
     B1Enemies = ['B10' for i in range(numberEnemies)]

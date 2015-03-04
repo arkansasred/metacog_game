@@ -34,46 +34,16 @@ class Game(object):
         else:
             return version
 
-    CONDITION = raw_input("Conditon (1 or 2): ")
-
-
-    VERSION = whichVersion(version = int(raw_input("Version number (1-5): ")))
-
 
     # --- Class attributes. 
      
     # Sprite lists
-    enemyA_list = None
-    enemyB_list = None
+    alienA_list = None
+    alienB_list = None
 
-    if VERSION == 1:
-        numberEnemies = 4
-    elif VERSION == 2 or VERSION == 3 or VERSION == 4:
-        numberEnemies = 10
-    elif VERSION == 5:
-        numberEnemies = 4
-    print VERSION
-
-
-    #define all the enemies
-    A1Enemies = ['A3' for i in range (numberEnemies)]
-    A2Enemies = ['A5' for i in range (numberEnemies)]
-    A3Enemies = ['A7' for i in range (numberEnemies)]
-    A4Enemies = ['A8' for i in range (numberEnemies)]
-    A5Enemies = ['A9' for i in range (numberEnemies)]
-    A6Enemies = ['A2' for i in range (numberEnemies)]
-    A7Enemies = ['A11' for i in range (numberEnemies)]
-    A8Enemies = ['A1' for i in range (numberEnemies)]
-    B1Enemies = ['B1' for i in range(numberEnemies)]
-    B2Enemies = ['B2' for i in range(numberEnemies)]
-    B3Enemies = ['B3' for i in range(numberEnemies)]
-    B4Enemies = ['B4' for i in range(numberEnemies)]
-    B5Enemies = ['B5' for i in range(numberEnemies)]
-    B6Enemies = ['B6' for i in range(numberEnemies)]
-    B7Enemies = ['B7' for i in range(numberEnemies)]
-    B8Enemies = ['B10' for i in range(numberEnemies)]
-
-    enemies_list = A1Enemies + A2Enemies + A3Enemies + A4Enemies + A5Enemies + A6Enemies + A7Enemies + A8Enemies + B1Enemies + B2Enemies + B3Enemies + B4Enemies + B5Enemies + B6Enemies + B7Enemies + B8Enemies
+    #randomize which group is friend/enemy for counterbalancing
+    isCrelchEnemy = randrange(2)
+    print isCrelchEnemy
     bullet_list = None
     all_sprites_list = None
     player = None
@@ -81,18 +51,9 @@ class Game(object):
     enemy_live = False #bool to tell us if there is a live enemy
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
-    ammo = numberEnemies*24 #3 bullets per true 'enemy'
-    if VERSION==2 or VERSION == 3:
-        #experimental
-        fontRenderTime = 0.0
-        fontRenderRemoval = 120.0
-        renderA = None
-        renderB = None
-    elif VERSION==4:
-        #control
-        renderTime = 0.0
-        renderRemoval = 120.0
-        render = None
+
+    #for transitioning from training to post test
+    game_over = False
 
     #this is for making animated explosions
     isExplosion_center = False
@@ -114,32 +75,74 @@ class Game(object):
     answer1 = True
     sight = False
     newBlock = False #elicit prospective assesment at each block
-    enemiesPerBlock = 20
+    AliensPerBlock = 16
     previousKill= False #helps keep track of whether previous trial was successful
     blockCount = 1
+
     #dicts that we can turn in to data frames for efficient data storage
-    blockData = {'Conditon': CONDITION, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
+    blockData = {'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
     predictionData = {'Block': [1], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
     # --- Class methods
     # Set up the game
-    def __init__(self):
-        shuffle(self.enemies_list)
-        shuffle(self.enemies_list)
+    def __init__(self, VERSION):
+        self.VERSION = VERSION
+        if VERSION == 1:
+            self.numberAliens = 4
+        elif VERSION == 2 or VERSION == 3 or VERSION == 4:
+            self.numberAliens = 8
+        elif VERSION == 5:
+            self.numberAliens = 4
+
+        self.blockData['Condition'] = VERSION
+
+
+        #define all the Aliens
+        A1Aliens = ['A3' for i in range (self.numberAliens)]
+        A2Aliens = ['A5' for i in range (self.numberAliens)]
+        A3Aliens = ['A7' for i in range (self.numberAliens)]
+        A4Aliens = ['A8' for i in range (self.numberAliens)]
+        A5Aliens = ['A9' for i in range (self.numberAliens)]
+        A6Aliens = ['A2' for i in range (self.numberAliens)]
+        A7Aliens = ['A6' for i in range (self.numberAliens)]
+        A8Aliens = ['A1' for i in range (self.numberAliens)]
+        B1Aliens = ['B1' for i in range(self.numberAliens)]
+        B2Aliens = ['B2' for i in range(self.numberAliens)]
+        B3Aliens = ['B3' for i in range(self.numberAliens)]
+        B4Aliens = ['B4' for i in range(self.numberAliens)]
+        B5Aliens = ['B5' for i in range(self.numberAliens)]
+        B6Aliens = ['B6' for i in range(self.numberAliens)]
+        B7Aliens = ['B7' for i in range(self.numberAliens)]
+        B8Aliens = ['B10' for i in range(self.numberAliens)]
+
+        self.Aliens_list = A1Aliens + A2Aliens + A3Aliens + A4Aliens + A5Aliens + A6Aliens + A7Aliens + A8Aliens + B1Aliens + B2Aliens + B3Aliens + B4Aliens + B5Aliens + B6Aliens + B7Aliens + B8Aliens
+        self.ammo = self.numberAliens*24 #3 bullets per true 'enemy'
+        if VERSION==2 or VERSION == 3:
+            #experimental
+            self.fontRenderTime = 0.0
+            self.fontRenderRemoval = 120.0
+            self.renderA = None
+            self.renderB = None
+        elif VERSION==4:
+            #control
+            self.renderTime = 0.0
+            self.renderRemoval = 120.0
+            self.render = None
+        
+        shuffle(self.Aliens_list)
         self.blockScore = 0
         self.blockSuccesses = 0
-        self.game_over = False
         self.game_start = True
 
         self.t = core.Clock()
          
         # Create sprite lists
-        self.enemyA_list = pygame.sprite.Group()
-        self.enemyB_list = pygame.sprite.Group()
+        self.alienA_list = pygame.sprite.Group()
+        self.alienB_list = pygame.sprite.Group()
         self.all_sprites_list = pygame.sprite.Group()
         self.bullet_list = pygame.sprite.Group()
 
-        self.q1=eztext.Input(x=10, y=SCREEN_HEIGHT//2, font = pygame.font.Font(None,28), maxlength=45, color=GREEN, prompt='For the next series of %s Aliens, how many do you think you will successfully shoot or capture?:  '%(self.enemiesPerBlock))
+        self.q1=eztext.Input(x=10, y=SCREEN_HEIGHT//2, font = pygame.font.Font(None,28), maxlength=45, color=GREEN, prompt='For the next series of %s Aliens, how many do you think you will successfully shoot or capture?:  '%(self.AliensPerBlock))
         self.q2=eztext.Input(x=SCREEN_WIDTH//2-400, y=SCREEN_HEIGHT//2, maxlength=45,color=GREEN,prompt="What do you think your score will be for this segment of the game?:  ")
          
         # Create the player
@@ -177,10 +180,8 @@ class Game(object):
         self.events = pygame.event.get()
 
         for event in self.events:
-            if event.type == pygame.QUIT:
-                return True
 
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     self.player.turnLeft = True
                 elif event.key == pygame.K_RIGHT:
@@ -201,8 +202,6 @@ class Game(object):
                         self.getMetacogEval=False
                         self.answer1=True
                         self.elapsedTime = 1
-                    else:
-                        shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
                 elif event.key == pygame.K_SPACE:
                     if self.game_start:
                         self.game_start = False
@@ -213,13 +212,45 @@ class Game(object):
                         self.newBlock = False
                         self.getMetacogEval = True
                         self.blockCount += 1
-                        self.predictionData['Block'].append(self.blockCount)
-                        self.predictionData['NumberActual'].append(self.blockSuccesses)
-                        self.predictionData['ScoreActual'].append(round(self.blockScore))
+                    elif self.game_over:
+                        self.VERSION = 5
+                        self.numberAliens = 4
+                        #define all the Aliens
+                        A1Aliens = ['A3' for i in range (self.numberAliens)]
+                        A2Aliens = ['A5' for i in range (self.numberAliens)]
+                        A3Aliens = ['A7' for i in range (self.numberAliens)]
+                        A4Aliens = ['A8' for i in range (self.numberAliens)]
+                        A5Aliens = ['A9' for i in range (self.numberAliens)]
+                        A6Aliens = ['A2' for i in range (self.numberAliens)]
+                        A7Aliens = ['A6' for i in range (self.numberAliens)]
+                        A8Aliens = ['A1' for i in range (self.numberAliens)]
+                        B1Aliens = ['B1' for i in range(self.numberAliens)]
+                        B2Aliens = ['B2' for i in range(self.numberAliens)]
+                        B3Aliens = ['B3' for i in range(self.numberAliens)]
+                        B4Aliens = ['B4' for i in range(self.numberAliens)]
+                        B5Aliens = ['B5' for i in range(self.numberAliens)]
+                        B6Aliens = ['B6' for i in range(self.numberAliens)]
+                        B7Aliens = ['B7' for i in range(self.numberAliens)]
+                        B8Aliens = ['B10' for i in range(self.numberAliens)]
+                        self.Aliens_list = A1Aliens + A2Aliens + A3Aliens + A4Aliens + A5Aliens + A6Aliens + A7Aliens + A8Aliens + B1Aliens + B2Aliens + B3Aliens + B4Aliens + B5Aliens + B6Aliens + B7Aliens + B8Aliens
+                        self.ammo = self.numberAliens*24 #3 bullets per true 'enemy'
+                        shuffle(self.Aliens_list)
                         self.blockScore = 0
                         self.blockSuccesses = 0
-                    else: 
-                        self.player.capture()
+                        self.game_start = True
+                        self.enemy_live = False #bool to tell us if there is a live enemy
+                        self.elapsedTime = 0.0 #keep track of elapsed time via frame rate change
+                        self.blockCount+=1
+                        self.predictionData['Block'].append(self.blockCount)
+                        Enemy.speed = 1
+                        self.player.rotationSpeed = 1.5
+                        self.player.speed = 10
+                        self.player
+                        self.game_over = False
+                elif event.key == pygame.K_s:
+                    shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
+                elif event.key == pygame.K_c:
+                    self.player.capture()
                 elif event.key == pygame.K_ESCAPE:
                     return True
             elif event.type == pygame.KEYUP:
@@ -279,21 +310,21 @@ class Game(object):
         # Create the enemy sprites
             
             if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
-                self.enemy_type = self.enemies_list.pop()
+                self.enemy_type = self.Aliens_list.pop()
                 self.blockData["EnemyType"].append(self.enemy_type)
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
                 self.all_sprites_list.add(self.enemy)
                 
                 if self.enemy_type[0]=='A':
-                    self.enemyA_list.add(self.enemy)
+                    self.alienA_list.add(self.enemy)
                 
                 elif self.enemy_type[0]=='B':
-                    self.enemyB_list.add(self.enemy)
+                    self.alienB_list.add(self.enemy)
 
-                """for every number enemies killed/captured that is 1/4th of total enemies, increase speed"""
+                """for every number Aliens killed/captured that is 1/4th of total Aliens, increase speed"""
 
-                if len(self.enemies_list)<(self.numberEnemies*16-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberEnemies*4)) == 0:
+                if len(self.Aliens_list)<(self.numberAliens*16-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberAliens*3)) == 0:
                     self.player.rotationSpeed+=1
                     Enemy.speed+=1
                     self.player.speed+=1
@@ -304,8 +335,9 @@ class Game(object):
                 """ Record time right when enemy fully enters screen """
                 if self.enemy.rect.y==0 or self.enemy.rect.y == SCREEN_HEIGHT or self.enemy.rect.x == 0 or self.enemy.rect.x == SCREEN_WIDTH:
                     self.sight = True
+                    self.sight = False
                 #when enemy enters screen, decrease score
-                if 0<= self.enemy.rect.y<=SCREEN_HEIGHT and 0 <= self.enemy.rect.x <=SCREEN_WIDTH:
+                if 0< self.enemy.rect.y<SCREEN_HEIGHT and 0 < self.enemy.rect.x <SCREEN_WIDTH:
                     self.blockScore -= 1/float(60) # decrease score by 1 for every second that enemy is alive
          
             
@@ -318,37 +350,62 @@ class Game(object):
             
             #collision detection
             for bullet in self.bullet_list:
-                self.enemy_hit_list = pygame.sprite.spritecollide(bullet, self.enemyA_list, True)
-                for enemy in self.enemy_hit_list:
-                    kill_enemy('A')
-                    self.bullet_list.remove(bullet)
-                    self.all_sprites_list.remove(bullet)
-                    self.isExplosion_enemy = True
-                    """if bullet goes off screen, remove it from sprites lists"""
+                if self.isCrelchEnemy:
+                    self.enemy_hit_list = pygame.sprite.spritecollide(bullet, self.alienA_list, True)
+                    for enemy in self.enemy_hit_list:
+                        kill_enemy('A')
+                        self.bullet_list.remove(bullet)
+                        self.all_sprites_list.remove(bullet)
+                        self.isExplosion_enemy = True
+                        """if bullet goes off screen, remove it from sprites lists"""
+                    """give audio feedback if wrong sprite shot"""
+                    if pygame.sprite.spritecollide(bullet, self.alienB_list, True):
+                        RT = self.t.getTime()
+                        self.blockData['TotalTime'].append(RT)
+                        self.blockData['Success'].append(0)
+                        self.blockData['EnemyHitPlayer'].append(0)
+                        self.blockData['Block'].append(self.blockCount)
+                        self.enemy.wrong_hit()
+                        self.blockScore -= 10
+                        self.isExplosion_enemy = True
+                        self.elapsedTime = 0
+                        self.enemy_live = False
+                        self.bullet_list.remove(bullet)
+                        self.all_sprites_list.remove(bullet)
+                        post_mortem()
+                        self.previousKill=False
+                elif not self.isCrelchEnemy:
+                    self.enemy_hit_list = pygame.sprite.spritecollide(bullet, self.alienB_list, True)
+                    for enemy in self.enemy_hit_list:
+                        kill_enemy('B')
+                        self.bullet_list.remove(bullet)
+                        self.all_sprites_list.remove(bullet)
+                        self.isExplosion_enemy = True
+                        """if bullet goes off screen, remove it from sprites lists"""
+                    """give audio feedback if wrong sprite shot"""
+                    if pygame.sprite.spritecollide(bullet, self.alienA_list, True):
+                        RT = self.t.getTime()
+                        self.blockData['TotalTime'].append(RT)
+                        self.blockData['Success'].append(0)
+                        self.blockData['EnemyHitPlayer'].append(0)
+                        self.blockData['Block'].append(self.blockCount)
+                        self.enemy.wrong_hit()
+                        self.blockScore -= 10
+                        self.isExplosion_enemy = True
+                        self.elapsedTime = 0
+                        self.enemy_live = False
+                        self.bullet_list.remove(bullet)
+                        self.all_sprites_list.remove(bullet)
+                        post_mortem()
+                        self.previousKill=False
                 if bullet.rect.x>SCREEN_WIDTH or bullet.rect.x<0 or bullet.rect.y>SCREEN_HEIGHT or bullet.rect.y<0:
                     self.bullet_list.remove(bullet)
                     self.all_sprites_list.remove(bullet)
-                """give audio feedback if wrong sprite shot"""
-                if pygame.sprite.spritecollide(bullet, self.enemyB_list, True):
-                    RT = self.t.getTime()
-                    self.blockData['TotalTime'].append(RT)
-                    self.blockData['Success'].append(0)
-                    self.blockData['EnemyHitPlayer'].append(0)
-                    self.blockData['Block'].append(self.blockCount)
-                    self.enemy.wrong_hit()
-                    self.blockScore -= 10
-                    self.isExplosion_enemy = True
-                    self.elapsedTime = 0
-                    self.enemy_live = False
-                    self.bullet_list.remove(bullet)
-                    self.all_sprites_list.remove(bullet)
-                    post_mortem()
-                    self.previousKill=False
             
  
 
             if self.player.atCenter:
-                if pygame.sprite.spritecollide(self.player, self.enemyB_list, True):
+                if pygame.sprite.spritecollide(self.player, self.alienB_list, True):
                     RT = self.t.getTime()
                     self.blockData['TotalTime'].append(RT)
                     self.blockData['Success'].append(0)
@@ -361,7 +418,7 @@ class Game(object):
                     post_mortem()
                     self.previousKill=False
                 
-                if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
+                if pygame.sprite.spritecollide(self.player, self.alienA_list, True):
                     RT = self.t.getTime()
                     self.blockData['TotalTime'].append(RT)
                     self.blockData['Success'].append(0)
@@ -377,57 +434,103 @@ class Game(object):
             
             elif not self.player.atCenter and self.enemy_live:
                 
-                if pygame.sprite.spritecollide(self.player, self.enemyB_list, True):
-                    if not self.enemy.targetReached:
-                        kill_enemy('B')
-                        self.player.targetReached = True
+                if pygame.sprite.spritecollide(self.player, self.alienB_list, True):
+                    if self.isCrelchEnemy:
+                        if not self.enemy.targetReached:
+                            kill_enemy('B')
+                            self.player.targetReached = True
+                        else:
+                            RT = self.t.getTime()
+                            self.blockData['TotalTime'].append(RT)
+                            self.blockData['Success'].append(0)
+                            self.blockData['EnemyHitPlayer'].append(1)
+                            self.blockData['Block'].append(self.blockCount)
+                            self.enemy_live = False
+                            self.enemy.wrong_hit()
+                            self.elapsedTime = 0
+                            self.blockScore -= 20
+                            post_mortem()
+                            self.previousKill=False
                     else:
-                        RT = self.t.getTime()
-                        self.blockData['TotalTime'].append(RT)
-                        self.blockData['Success'].append(0)
-                        self.blockData['EnemyHitPlayer'].append(1)
-                        self.blockData['Block'].append(self.blockCount)
-                        self.enemy_live = False
-                        self.enemy.wrong_hit()
-                        self.elapsedTime = 0
-                        self.blockScore -= 20
-                        post_mortem()
-                        self.previousKill=False
+                        if not self.enemy.targetReached:
+                            RT = self.t.getTime()
+                            self.blockData['TotalTime'].append(RT)
+                            self.blockData['Success'].append(0)
+                            self.blockData['EnemyHitPlayer'].append(0)
+                            self.blockData['Block'].append(self.blockCount)      
+                            self.enemy.wrong_hit()
+                            self.enemy_live = False
+                            self.elapsedTime = 0
+                            self.blockScore -= 10
+                            self.isExplosion_enemy=True
+                            self.player.targetReached=True
+                            post_mortem()
+                            self.previousKill=False
+                        else:
+                            RT = self.t.getTime()
+                            self.blockData['TotalTime'].append(RT)
+                            self.blockData['Success'].append(0)
+                            self.blockData['EnemyHitPlayer'].append(1)
+                            self.blockData['Block'].append(self.blockCount)
+                            self.explosionSound.out()
+                            self.blockScore -= 20
+                            self.isExplosion_player = True
+                            self.elapsedTime = 0
+                            self.enemy_live = False
+                            post_mortem()
+                            self.previousKill=False
                 
-                if pygame.sprite.spritecollide(self.player, self.enemyA_list, True):
-                    if not self.enemy.targetReached:
-                        RT = self.t.getTime()
-                        self.blockData['TotalTime'].append(RT)
-                        self.blockData['Success'].append(0)
-                        self.blockData['EnemyHitPlayer'].append(0)
-                        self.blockData['Block'].append(self.blockCount)      
-                        self.enemy.wrong_hit()
-                        self.enemy_live = False
-                        self.elapsedTime = 0
-                        self.blockScore -= 10
-                        self.isExplosion_enemy=True
-                        self.player.targetReached=True
-                        post_mortem()
-                        self.previousKill=False
+                if pygame.sprite.spritecollide(self.player, self.alienA_list, True):
+                    if self.isCrelchEnemy:
+                        if not self.enemy.targetReached:
+                            RT = self.t.getTime()
+                            self.blockData['TotalTime'].append(RT)
+                            self.blockData['Success'].append(0)
+                            self.blockData['EnemyHitPlayer'].append(0)
+                            self.blockData['Block'].append(self.blockCount)      
+                            self.enemy.wrong_hit()
+                            self.enemy_live = False
+                            self.elapsedTime = 0
+                            self.blockScore -= 10
+                            self.isExplosion_enemy=True
+                            self.player.targetReached=True
+                            post_mortem()
+                            self.previousKill=False
+                        else:
+                            RT = self.t.getTime()
+                            self.blockData['TotalTime'].append(RT)
+                            self.blockData['Success'].append(0)
+                            self.blockData['EnemyHitPlayer'].append(1)
+                            self.blockData['Block'].append(self.blockCount)
+                            self.explosionSound.out()
+                            self.blockScore -= 20
+                            self.isExplosion_player = True
+                            self.elapsedTime = 0
+                            self.enemy_live = False
+                            post_mortem()
+                            self.previousKill=False
                     else:
-                        RT = self.t.getTime()
-                        self.blockData['TotalTime'].append(RT)
-                        self.blockData['Success'].append(0)
-                        self.blockData['EnemyHitPlayer'].append(1)
-                        self.blockData['Block'].append(self.blockCount)
-                        self.explosionSound.out()
-                        self.blockScore -= 20
-                        self.isExplosion_player = True
-                        self.elapsedTime = 0
-                        self.enemy_live = False
-                        post_mortem()
-                        self.previousKill=False
+                        if not self.enemy.targetReached:
+                            kill_enemy('A')
+                            self.player.targetReached = True
+                        else:
+                            RT = self.t.getTime()
+                            self.blockData['TotalTime'].append(RT)
+                            self.blockData['Success'].append(0)
+                            self.blockData['EnemyHitPlayer'].append(1)
+                            self.blockData['Block'].append(self.blockCount)
+                            self.enemy_live = False
+                            self.enemy.wrong_hit()
+                            self.elapsedTime = 0
+                            self.blockScore -= 20
+                            post_mortem()
+                            self.previousKill=False                        
 
-            if len(self.enemies_list)!=0 and (len(self.enemies_list)%self.enemiesPerBlock==0) and self.elapsedTime==0:
+            if len(self.Aliens_list)!=0 and (len(self.Aliens_list)%(self.AliensPerBlock)==0) and self.elapsedTime==0:
                 self.newBlock = True
 
             """define end of game"""
-            if len(self.enemies_list)==0 and not self.enemy_live:
+            if len(self.Aliens_list)==0 and not self.enemy_live:
                 self.predictionData['NumberActual'].append(self.blockSuccesses)
                 self.predictionData['ScoreActual'].append(round(self.blockScore))
                 self.game_over = True
@@ -447,7 +550,7 @@ class Game(object):
         if self.newBlock:  
             font = pygame.font.Font(None, 25)
             text2 = font.render("You successfully killed or captured a total of "+ str(self.blockSuccesses) +
-                                " of the " + str(self.enemiesPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
+                                " of the " + str(self.AliensPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
                                 True, GREEN)
             text3 = font.render("  Hit space to continue", True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
@@ -457,17 +560,27 @@ class Game(object):
 
         elif self.game_start:
             font = pygame.font.Font(None, 25)
-            text = font.render("Hello, thank you for participating in this experiment! You will be using the following buttons for the first level:",
+            text = font.render("Hello, thank you for participating in this experiment! You will be using the following buttons for this game:",
                                True, WHITE)
-            text2 = font.render("Space:            Enter:", True, WHITE)
+            text2 = font.render("Space:                      Enter:", True, WHITE)
             text3 = font.render ("Press the Space bar to begin", True, WHITE)
             shoot = font.render("SHOOT",True, RED)
             capture = font.render("CAPTURE", True, GREEN)
-            center_text(text)
-            next_line(text2, 40)
+            next_line(text, -60)
+            next_line(text2, -25)
             next_line(text3, 140)
-            screen.blit(shoot, [520,440])
-            screen.blit(capture, [420,440])
+            screen.blit(shoot, [560,380])
+            screen.blit(capture, [370,380])
+            if self.isCrelchEnemy and self.VERSION == 2 or self.VERSION == 3:
+                crelch = font.render("Crelch", True, RED)
+                foove = font.render("Foove", True, GREEN)
+                screen.blit(crelch, [560,420])
+                screen.blit(foove, [380,420])
+            elif not self.isCrelchEnemy and self.VERSION == 2 or self.VERSION == 3:
+                crelch = font.render("Crelch", True, GREEN)
+                foove = font.render("Foove", True, RED)
+                screen.blit(crelch, [380,420])
+                screen.blit(foove, [560,420])
 
         elif self.getMetacogEval:
             if self.answer1:
@@ -483,13 +596,13 @@ class Game(object):
             font = pygame.font.Font(None, 18)
             font2 = pygame.font.Font(None, 25)
             text2 = font.render("You just successfully killed or captured a total of "+ str(self.blockSuccesses) +
-                                " of the " + str(self.enemiesPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
+                                " of the " + str(self.AliensPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])
             text3 = font2.render("Overall, you successfully killed or captured a total of "+ str(sum(self.blockData['Success'])) +
-                                " of the " + str(self.numberEnemies*16) + " aliens you encountered, for a total score of {:.0f}".format(sum(self.predictionData["ScoreActual"])),
+                                " of the " + str(len(self.blockData['Success'])) + " aliens you encountered, for a total score of {:.0f}".format(sum(self.predictionData["ScoreActual"])),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text3.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text3.get_height() // 2) + 40

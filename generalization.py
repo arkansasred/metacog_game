@@ -2,6 +2,7 @@ from psychopy import visual, core, event
 from os import listdir, path, mkdir
 from itertools import product, permutations, izip_longest
 from random import shuffle
+import pandas as pd
 
 
 
@@ -25,8 +26,8 @@ win = visual.Window(monitor="testMonitor", units="deg", allowGUI=False, fullscr 
 intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use 'Space' and 'Enter' to indicate whether you would 'Shoot' or 'Capture' the Aliens. Press Space to begin.", wrapWidth=20, alignHoriz="center")
 
 question = visual.TextStim(win, text="Capture or Shoot?", color='Black', pos=(0,8), wrapWidth=20)
-answer = visual.TextStim(win, text="Space								Enter", color='Black', pos=(0,-2), wrapWidth=20, bold = True)
-reminder = visual.TextStim(win,text="Capture 							  	Shoot", color='Black', pos=(0,0),wrapWidth=20, height = 0.9)
+answer = visual.TextStim(win, text="'s'								        'c'", color='Black', pos=(0,-2), wrapWidth=20, bold = True)
+reminder = visual.TextStim(win,text="Shoot 							  	Capture", color='Black', pos=(0,0),wrapWidth=20, height = 0.9)
 
 
 confidenceQuestion = visual.TextStim(win, text="How confident are you in your judgment", color = 'Black', pos = (0,4), wrapWidth=20)
@@ -46,14 +47,8 @@ enemyB = ["Images/Enemies/EnemyB/{0}".format(i) for i in enemyBTypes if not i.st
 enemyB = [visual.ImageStim(win, B, pos=(0,0), size=(4,4), units="deg", name=B[-7:-4]) for B in enemyB]
 enemies = enemyA*eachEnemy+enemyB*eachEnemy
 shuffle(enemies)
-shuffle(enemies)
 
-confidenceRatings=[]
-alienResponses= []
-alienTypes = []
-RTs = []
-
-familiarityRankings = open("Subject %s/Generalization/responses.txt"%SUBJECT, "w")
+data = {'response':[], 'alienType':[], 'confidenceRating':[], 'RT':[]}
 
 newPair = False
 aliens = False
@@ -88,17 +83,13 @@ while True:
 		answer.draw()
 		reminder.draw()
 		win.flip()
-		responseKeys = event.waitKeys(keyList=['space','return'])
+		responseKeys = event.waitKeys(keyList=['s','c'])
 		if len(responseKeys)>0:
 			RT = t.getTime()
-			RTs.append(str(RT))
-			alienTypes.append(str(alienType))
+			data['RT'].append(RT)
+			data['alienType'].append(str(alienType))
 			alienResponse = responseKeys.pop()
-			alienResponses.append(str(alienResponse))
-			"""if len(enemyCombinations)==0:
-				for response in responses:
-					familiarityRankings.write("%s \n"%response)
-				break"""
+			data['response'].append(str(alienResponse))
 			confidence = True
 			aliens = False
 			event.clearEvents()
@@ -113,7 +104,7 @@ while True:
 		responseKeys = event.waitKeys(keyList=['1','2','3','4','5'])
 		if len(responseKeys)>0:
 			confidenceRating = (responseKeys.pop())
-			confidenceRatings.append(str(confidenceRating))
+			data['confidenceRating'].append(confidenceRating)
 			if len(enemies)==0:
 				break
 			confidence = False
@@ -122,9 +113,7 @@ while True:
 
 
 #cleanup
-
-for theType, response, rating, RT in izip_longest(alienTypes, alienResponses, confidenceRatings, RTs):
-	familiarityRankings.write(theType+','+response+','+rating + ',' + RT + '\n')
-familiarityRankings.close()
+data_df = pd.DataFrame(data)
+data_df.to_csv("Subject %s/Generalization/generalization.csv"%SUBJECT)
 win.close()
 core.quit()

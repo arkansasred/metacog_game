@@ -11,24 +11,27 @@ import pandas as pd
          
 def main():
     def checkData(subj):
-        if Game.VERSION==1:
-            if path.exists("Subject %s/PreTest/"%subj):
+        if VERSION==2:
+            if path.exists("Subject %s/LabelsCongruent/"%subj):
                 subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
                 return checkData(subj)
-        elif Game.VERSION==3:
-            if path.exists("Subject %s/TrainingLabels/"%subj):
+        elif VERSION==3:
+            if path.exists("Subject %s/LabelsIncongruent/"%subj):
                 subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
                 return checkData(subj)
-        elif Game.VERSION==4:
-            if path.exists("Subject %s/TrainingNoLabels/"%subj):
-                subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
-                return checkData(subj)
-        elif Game.VERSION==5:
-            if path.exists("Subject %s/PostTest/"%subj):
+        elif VERSION==4:
+            if path.exists("Subject %s/NoLabels/"%subj):
                 subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
                 return checkData(subj)
         return subj
     
+    CONDITION = int(raw_input("Condition (1-3): "))
+    if CONDITION == 1:
+        VERSION = 2
+    elif CONDITION == 2:
+        VERSION = 3
+    elif CONDITION == 3:
+        VERSION = 4
     SUBJECT = checkData(subj = raw_input("Subject Number: "))
     if not path.exists("Subject %s"%SUBJECT):
         mkdir("Subject %s"%SUBJECT)
@@ -60,7 +63,7 @@ def main():
     pygame.mouse.set_visible(False)
     
     # Create an instance of the Game class
-    game = Game()
+    game = Game(VERSION = VERSION)
     # Main game loop
     while not done:
         # Process events (keystrokes, mouse clicks, etc)
@@ -77,95 +80,23 @@ def main():
         # Pause for the next frame
         clock.tick(FPS)
 
-    if Game.VERSION==1:
-        directory="Subject %s/PreTest/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
-    elif Game.VERSION==2:
-        directory="Subject %s/TrainingLabelsCongruent/"%SUBJECT
+    if VERSION==2:
+        directory="Subject %s/LabelsCongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
     elif Game.VERSION==3:
-        directory = "Subject %s/TrainingNoLabelsIncongruent/"%SUBJECT
+        directory = "Subject %s/NoLabelsIncongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
     elif Game.VERSION==4:
-        directory = "Subject %s/TrainingNoLabels/"%SUBJECT
+        directory = "Subject %s/NoLabels/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif Game.VERSION == 5:
-        directory = "Subject %s/PostTest/"%SUBJECT
-        if not path.exists(directory):
-            mkdir(directory)
+
     general = pd.DataFrame(Game.blockData)
     predictions = pd.DataFrame(Game.predictionData)
     general.to_csv(directory+'generalData.csv')
     predictions.to_csv(directory+'predictionData.csv')
-
-    """print Game.answer1Val
-    print Game.answer2Val
-    shots = open(directory+"shots.txt", 'w')
-    captures = open(directory+"captures.txt", 'w') # this is the capture 'attempt' timestamp
-    AKills = open(directory+"Akills.txt", 'w')
-    BKills = open (directory+'Bkills.txt', 'w')
-    AwrongHits = open(directory+"Awronghits.txt", 'w')
-    BwrongHits = open(directory+"Bwronghits.txt", 'w')
-    AhitPlayer = open(directory+"Ahitplayer.txt", 'w')
-    BhitPlayer = open(directory+"Bhitplayer.txt", 'w')
-    sightsA = open(directory+"sightsA.txt", 'w')
-    sightsB = open(directory+"sightsB.txt", 'w')
-    numberPrediction = open(directory+"numberPrediction.txt", 'w')
-    scorePrediction = open(directory+"scorePrediction.txt", 'w')
-    numberActual = open(directory+"numberActual.txt",'w')
-    scoreActual = open(directory+"scoreActual.txt", 'w')
-    for sight in Game.enemyASightTime:
-        sightsA.write(str(sight)+'\n')
-    for sight in Game.enemyBSightTime:
-        sightsB.write(str(sight)+'\n')
-    for shot in Game.shotTime:
-        shots.write(str(shot)+'\n')
-    for capture in Game.captureTime:
-        captures.write(str(capture)+'\n')
-    for kill in Game.enemyAKillTime1:
-        AKills.write(str(kill)+'\n')
-    for kill in Game.enemyBKillTime1:
-        BKills.write(str(kill)+'\n')
-    for kill in Game.enemyAKillTime:
-        AKills.write(str(kill)+'\n')
-    for kill in Game.enemyBKillTime:
-        BKills.write(str(kill)+'\n')
-    for hit in Game.enemyAWrongHitTime:
-        AwrongHits.write(str(hit)+'\n')
-    for hit in Game.enemyBWrongHitTime:
-        BwrongHits.write(str(hit)+'\n')
-    for hit in Game.enemyAHitPlayerTime:
-        AhitPlayer.write(str(hit)+'\n')
-    for hit in Game.enemyBHitPlayerTime:
-        BhitPlayer.write(str(hit)+'\n')
-    for prediction in Game.answer1Val:
-        numberPrediction.write(str(prediction)+'\n')
-    for prediction in Game.answer2Val:
-        scorePrediction.write(str(prediction)+'\n')
-    for answer in Game.answer1Actual:
-        numberActual.write(str(answer)+'\n')
-    for answer in Game.answer2Actual:
-        scoreActual.write(str(answer)+'\n')
-
-
-    shots.close()
-    captures.close()
-    AKills.close()
-    BKills.close()
-    AwrongHits.close()
-    BwrongHits.close()
-    AhitPlayer.close()
-    BhitPlayer.close()
-    numberPrediction.close()
-    scorePrediction.close()
-    sightsA.close()
-    sightsB.close()
-    scoreActual.close()
-    numberActual.close()"""
 
     #shut down pyo server
     s.stop()

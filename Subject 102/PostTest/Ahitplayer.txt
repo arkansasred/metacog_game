@@ -1,7 +1,0 @@
-<function getTime at 0x03446BB0>
-105.049517841
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>
-<function getTime at 0x03446BB0>

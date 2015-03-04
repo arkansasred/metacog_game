@@ -138,10 +138,10 @@ class Enemy(pygame.sprite.Sprite):
             direction = dist.normalize() # normalize so its constant in all directions
             self.rect.x += (round(direction[0]) * self.speed) # calculate speed from direction to move and speed constant, rounding debugs the diagonal vectors
             self.rect.y += (round(direction[1]) * self.speed)
-            dist_x = abs(dist[0]) # gets absolute value of the x distance
-            dist_y = abs(dist[1]) # gets absolute value of the y distance
+            dist_x = round(abs(dist[0])) # gets absolute value of the x distance
+            dist_y = round(abs(dist[1])) # gets absolute value of the y distance
             t_dist = dist_x + dist_y # gets total absolute value distance
             speed = abs(self.speed) # gets aboslute value of the speed
-            if t_dist < speed//2:
+            if t_dist < speed*8:
                 self.target = None
                 self.targetReached = True
