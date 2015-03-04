@@ -84,11 +84,11 @@ def main():
         directory="Subject %s/LabelsCongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif Game.VERSION==3:
+    elif VERSION==3:
         directory = "Subject %s/NoLabelsIncongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif Game.VERSION==4:
+    elif VERSION==4:
         directory = "Subject %s/NoLabels/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)

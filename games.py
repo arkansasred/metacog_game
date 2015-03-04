@@ -43,7 +43,6 @@ class Game(object):
 
     #randomize which group is friend/enemy for counterbalancing
     isCrelchEnemy = randrange(2)
-    print isCrelchEnemy
     bullet_list = None
     all_sprites_list = None
     player = None
@@ -80,7 +79,7 @@ class Game(object):
     blockCount = 1
 
     #dicts that we can turn in to data frames for efficient data storage
-    blockData = {'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
+    blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
     predictionData = {'Block': [1], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
     # --- Class methods
@@ -154,6 +153,8 @@ class Game(object):
         self.explosionSound = pyo.SfPlayer("Sounds/explosion.wav", speed=[1,1], mul=0.5)
         self.env = pyo.Adsr(attack=.01, decay=.05, sustain=.2, release=.1, dur=.5, mul=.5)
         self.bell = pyo.Sine(freq=[800,800], mul=self.env).out()
+        self.foove = pyo.SfPlayer("Sounds/foove.wav")
+        self.crelch = pyo.SfPlayer("Sounds/crelch.wav")
  
     def process_events(self):
         """ Process all of the events. Return a "True" if we need
@@ -190,7 +191,6 @@ class Game(object):
                     if self.getMetacogEval and self.answer1:
                         """log the estimate in the answer1Val list, go to second question"""
                         estimate=self.q1.value
-                        print estimate
                         self.predictionData['NumberPrediction'].append(estimate)
                         self.q1.value=""
                         self.answer1=False
@@ -245,7 +245,6 @@ class Game(object):
                         Enemy.speed = 1
                         self.player.rotationSpeed = 1.5
                         self.player.speed = 10
-                        self.player
                         self.game_over = False
                 elif event.key == pygame.K_s:
                     shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
@@ -271,21 +270,15 @@ class Game(object):
         def post_mortem():
             if self.VERSION==2:
                 if self.enemy_type[0] == 'A':
-                    self.enemy.crelch.out()
                     self.renderA = True
                 elif self.enemy_type[0] == 'B':
-                    self.enemy.foove.out()
                     self.renderB = True
             elif self.VERSION == 3:
                 if self.enemy_type[0] == 'A':
-                    self.enemy.foove.out()
                     self.renderA = True
                 elif self.enemy_type[0] == 'B':
-                    self.enemy.crelch.out()
                     self.renderB = True
             elif self.VERSION == 4:
-                #play sine tone
-                self.env.play()
                 self.render = True
         
         def kill_enemy(enemy_type):
@@ -309,6 +302,24 @@ class Game(object):
         if not self.game_start and not self.game_over and not self.newBlock:
         # Create the enemy sprites
             
+            if hasattr(self, 'enemy_type') and self.elapsedTime==5.0:
+                if self.VERSION==2:
+                    print self.enemy_type[0]
+                    if self.enemy_type[0] == 'A':
+                        self.crelch.out()
+                    elif self.enemy_type[0] == 'B':
+                        self.foove.out()
+                    else:
+                        pass
+                elif self.VERSION == 3:
+                    if self.enemy_type[0] == 'A':
+                        self.foove.out()
+                    elif self.enemy_type[0] == 'B':
+                        self.crelch.out()
+                elif self.VERSION == 4:
+                    #play sine tone
+                    self.env.play()
+
             if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
                 self.enemy_type = self.Aliens_list.pop()
                 self.blockData["EnemyType"].append(self.enemy_type)
@@ -335,10 +346,10 @@ class Game(object):
                 """ Record time right when enemy fully enters screen """
                 if self.enemy.rect.y==0 or self.enemy.rect.y == SCREEN_HEIGHT or self.enemy.rect.x == 0 or self.enemy.rect.x == SCREEN_WIDTH:
                     self.sight = True
-                    self.sight = False
                 #when enemy enters screen, decrease score
                 if 0< self.enemy.rect.y<SCREEN_HEIGHT and 0 < self.enemy.rect.x <SCREEN_WIDTH:
                     self.blockScore -= 1/float(60) # decrease score by 1 for every second that enemy is alive
+                    self.sight = False
          
             
             # Move all the sprites
@@ -618,8 +629,8 @@ class Game(object):
             ammo = font.render('Ammo: %d'%self.ammo, True, YELLOW)
             x_pos = SCREEN_WIDTH//4
             """screen.blit(lives, [x_pos, lives.get_height()])"""
-            screen.blit(score, [x_pos, SCREEN_HEIGHT-(score.get_height()+ammo.get_height())])
-            screen.blit(ammo, [x_pos, SCREEN_HEIGHT-(ammo.get_height())])
+            screen.blit(score, [x_pos, (score.get_height()+ammo.get_height())])
+            screen.blit(ammo, [x_pos, (ammo.get_height())])
             if self.isExplosion_center:
                 """animate the explosion"""
                 pos = (SCREEN_WIDTH//2-20,SCREEN_HEIGHT//2-20)
