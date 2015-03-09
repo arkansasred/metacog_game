@@ -123,7 +123,7 @@ class Enemy(pygame.sprite.Sprite):
     
     def wrong_hit(self):
         """play a sound, decrease score when wrong bullet hits enemy"""
-        self.miss = pyo.SfPlayer("Sounds/beep.wav", loop=False).mix(2)
+        self.miss = pyo.SfPlayer("Sounds/buzz_alt.wav", loop=False, mul = 0.2)
         self.miss.out()
     
     def update(self):

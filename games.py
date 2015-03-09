@@ -6,7 +6,7 @@ from bullet import Bullet
 from enemy import Enemy
 from player import Player
 from global_variables import *
-from random import shuffle, randrange
+from random import shuffle, randrange, choice
 import eztext
 import pandas as pd
 
@@ -74,7 +74,7 @@ class Game(object):
     answer1 = True
     sight = False
     newBlock = False #elicit prospective assesment at each block
-    AliensPerBlock = 16
+    AliensPerBlock = 10
     previousKill= False #helps keep track of whether previous trial was successful
     blockCount = 1
 
@@ -82,40 +82,27 @@ class Game(object):
     blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
     predictionData = {'Block': [1], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
+    Aliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']
     # --- Class methods
     # Set up the game
     def __init__(self, VERSION):
         self.VERSION = VERSION
         if VERSION == 1:
-            self.numberAliens = 4
+            self.numberAliens = 40
         elif VERSION == 2 or VERSION == 3 or VERSION == 4:
-            self.numberAliens = 8
-        elif VERSION == 5:
-            self.numberAliens = 4
+            self.numberAliens = 60
+        """elif VERSION == 5:
+            self.numberAliens = 4"""
 
         self.blockData['Condition'] = VERSION
 
+        self.Aliens_list = []
+        i = 1
+        while(i<=self.numberAliens):
+            self.Aliens_list.append(choice(self.Aliens))
+            i += 1
+        self.ammo = (self.numberAliens/2)*3 #3 bullets per true 'enemy'
 
-        #define all the Aliens
-        A1Aliens = ['A3' for i in range (self.numberAliens)]
-        A2Aliens = ['A5' for i in range (self.numberAliens)]
-        A3Aliens = ['A7' for i in range (self.numberAliens)]
-        A4Aliens = ['A8' for i in range (self.numberAliens)]
-        A5Aliens = ['A9' for i in range (self.numberAliens)]
-        A6Aliens = ['A2' for i in range (self.numberAliens)]
-        A7Aliens = ['A6' for i in range (self.numberAliens)]
-        A8Aliens = ['A1' for i in range (self.numberAliens)]
-        B1Aliens = ['B1' for i in range(self.numberAliens)]
-        B2Aliens = ['B2' for i in range(self.numberAliens)]
-        B3Aliens = ['B3' for i in range(self.numberAliens)]
-        B4Aliens = ['B4' for i in range(self.numberAliens)]
-        B5Aliens = ['B5' for i in range(self.numberAliens)]
-        B6Aliens = ['B6' for i in range(self.numberAliens)]
-        B7Aliens = ['B7' for i in range(self.numberAliens)]
-        B8Aliens = ['B10' for i in range(self.numberAliens)]
-
-        self.Aliens_list = A1Aliens + A2Aliens + A3Aliens + A4Aliens + A5Aliens + A6Aliens + A7Aliens + A8Aliens + B1Aliens + B2Aliens + B3Aliens + B4Aliens + B5Aliens + B6Aliens + B7Aliens + B8Aliens
-        self.ammo = self.numberAliens*24 #3 bullets per true 'enemy'
         if VERSION==2 or VERSION == 3:
             #experimental
             self.fontRenderTime = 0.0
@@ -201,49 +188,39 @@ class Game(object):
                         self.q2.value=""
                         self.getMetacogEval=False
                         self.answer1=True
-                        self.elapsedTime = 1
+                        self.elapsedTime = 0
                 elif event.key == pygame.K_SPACE:
                     if self.game_start:
                         self.game_start = False
                         self.getMetacogEval=True
                     elif self.newBlock:
-                        #blockFile = "block"+str(blockCount)+".txt"
                         #record then reset score, etc.
+                        self.enemy_type = 'C' #cheap trick to stop label being played
                         self.newBlock = False
                         self.getMetacogEval = True
+                        self.blockSuccesses = 0
+                        self.blockScore = 0
                         self.blockCount += 1
                     elif self.game_over:
+                        """this resets up a game as post test"""
                         self.VERSION = 5
-                        self.numberAliens = 4
-                        #define all the Aliens
-                        A1Aliens = ['A3' for i in range (self.numberAliens)]
-                        A2Aliens = ['A5' for i in range (self.numberAliens)]
-                        A3Aliens = ['A7' for i in range (self.numberAliens)]
-                        A4Aliens = ['A8' for i in range (self.numberAliens)]
-                        A5Aliens = ['A9' for i in range (self.numberAliens)]
-                        A6Aliens = ['A2' for i in range (self.numberAliens)]
-                        A7Aliens = ['A6' for i in range (self.numberAliens)]
-                        A8Aliens = ['A1' for i in range (self.numberAliens)]
-                        B1Aliens = ['B1' for i in range(self.numberAliens)]
-                        B2Aliens = ['B2' for i in range(self.numberAliens)]
-                        B3Aliens = ['B3' for i in range(self.numberAliens)]
-                        B4Aliens = ['B4' for i in range(self.numberAliens)]
-                        B5Aliens = ['B5' for i in range(self.numberAliens)]
-                        B6Aliens = ['B6' for i in range(self.numberAliens)]
-                        B7Aliens = ['B7' for i in range(self.numberAliens)]
-                        B8Aliens = ['B10' for i in range(self.numberAliens)]
-                        self.Aliens_list = A1Aliens + A2Aliens + A3Aliens + A4Aliens + A5Aliens + A6Aliens + A7Aliens + A8Aliens + B1Aliens + B2Aliens + B3Aliens + B4Aliens + B5Aliens + B6Aliens + B7Aliens + B8Aliens
-                        self.ammo = self.numberAliens*24 #3 bullets per true 'enemy'
-                        shuffle(self.Aliens_list)
+                        self.numberAliens = 20
+                        self.Aliens_list = []
+                        i = 1
+                        while(i<=self.numberAliens):
+                            self.Aliens_list.append(choice(self.Aliens))
+                            i += 1
+                        self.ammo = (self.numberAliens/2)*3 #3 bullets per true 'enemy'
                         self.blockScore = 0
                         self.blockSuccesses = 0
                         self.game_start = True
                         self.enemy_live = False #bool to tell us if there is a live enemy
                         self.elapsedTime = 0.0 #keep track of elapsed time via frame rate change
+                        self.AliensPerBlock = 10
                         self.blockCount+=1
                         self.predictionData['Block'].append(self.blockCount)
-                        Enemy.speed = 1
-                        self.player.rotationSpeed = 1.5
+                        Enemy.speed = 2
+                        self.player.rotationSpeed = 2
                         self.player.speed = 10
                         self.game_over = False
                 elif event.key == pygame.K_s:
@@ -292,7 +269,7 @@ class Game(object):
             post_mortem()
             self.enemy.pop.out()
             self.blockScore += 20
-            self.elapsedTime = 0
+            self.elapsedTime = 0.0
             self.enemy_live = False
             self.previousKill = True
 
@@ -304,7 +281,6 @@ class Game(object):
             
             if hasattr(self, 'enemy_type') and self.elapsedTime==5.0:
                 if self.VERSION==2:
-                    print self.enemy_type[0]
                     if self.enemy_type[0] == 'A':
                         self.crelch.out()
                     elif self.enemy_type[0] == 'B':
@@ -316,9 +292,12 @@ class Game(object):
                         self.foove.out()
                     elif self.enemy_type[0] == 'B':
                         self.crelch.out()
+                    else:
+                        pass
                 elif self.VERSION == 4:
+                    if self.enemy_type != None:
                     #play sine tone
-                    self.env.play()
+                        self.env.play()
 
             if not self.enemy_live and not self.getMetacogEval and self.elapsedTime==self.enemySpawnTime:
                 self.enemy_type = self.Aliens_list.pop()
@@ -335,7 +314,7 @@ class Game(object):
 
                 """for every number Aliens killed/captured that is 1/4th of total Aliens, increase speed"""
 
-                if len(self.Aliens_list)<(self.numberAliens*16-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberAliens*3)) == 0:
+                if len(self.Aliens_list)<(self.numberAliens-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberAliens//5)) == 0 and not self.VERSION == 5:
                     self.player.rotationSpeed+=1
                     Enemy.speed+=1
                     self.player.speed+=1
@@ -425,7 +404,11 @@ class Game(object):
                     self.enemy_live = False
                     self.elapsedTime = 0
                     self.blockScore -= 20
-                    self.enemy.wrong_hit()
+                    if not self.isCrelchEnemy:
+                        self.isExplosion_center = True
+                        self.explosionSound.out()
+                    else:
+                        self.enemy.wrong_hit()
                     post_mortem()
                     self.previousKill=False
                 
@@ -438,8 +421,11 @@ class Game(object):
                     self.enemy_live = False
                     self.elapsedTime = 0
                     self.blockScore -= 20
-                    self.isExplosion_center=True
-                    self.explosionSound.out()
+                    if self.isCrelchEnemy:
+                        self.isExplosion_center=True
+                        self.explosionSound.out()
+                    else:
+                        self.enemy.wrong_hit()
                     post_mortem()
                     self.previousKill=False
             
@@ -539,6 +525,9 @@ class Game(object):
 
             if len(self.Aliens_list)!=0 and (len(self.Aliens_list)%(self.AliensPerBlock)==0) and self.elapsedTime==0:
                 self.newBlock = True
+                self.render = False
+                self.renderA = False
+                self.renderB = False
 
             """define end of game"""
             if len(self.Aliens_list)==0 and not self.enemy_live:

@@ -93,6 +93,8 @@ def main():
         if not path.exists(directory):
             mkdir(directory)
 
+    print Game.predictionData
+    print Game.blockData
     general = pd.DataFrame(Game.blockData)
     predictions = pd.DataFrame(Game.predictionData)
     general.to_csv(directory+'generalData.csv')
