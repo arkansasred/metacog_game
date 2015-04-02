@@ -85,7 +85,7 @@ def main():
         if not path.exists(directory):
             mkdir(directory)
     elif VERSION==3:
-        directory = "Subject %s/NoLabelsIncongruent/"%SUBJECT
+        directory = "Subject %s/LabelsIncongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
     elif VERSION==4:

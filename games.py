@@ -88,7 +88,7 @@ class Game(object):
     def __init__(self, VERSION):
         self.VERSION = VERSION
         if VERSION == 1:
-            self.numberAliens = 40
+            self.numberAliens = 30
         elif VERSION == 2 or VERSION == 3 or VERSION == 4:
             self.numberAliens = 60
         """elif VERSION == 5:
