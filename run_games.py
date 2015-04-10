@@ -80,15 +80,15 @@ def main():
         # Pause for the next frame
         clock.tick(FPS)
 
-    if VERSION==2:
+    if CONDITION==1:
         directory="Subject %s/LabelsCongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif VERSION==3:
+    elif CONDITION==2:
         directory = "Subject %s/LabelsIncongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif VERSION==4:
+    elif CONDITION==3:
         directory = "Subject %s/NoLabels/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)

@@ -140,6 +140,6 @@ class Enemy(pygame.sprite.Sprite):
             dist_y = round(abs(dist[1])) # gets absolute value of the y distance
             t_dist = dist_x + dist_y # gets total absolute value distance
             speed = abs(self.speed) # gets aboslute value of the speed
-            if t_dist < speed*8:
+            if t_dist < speed*2:
                 self.target = None
                 self.targetReached = True

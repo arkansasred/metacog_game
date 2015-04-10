@@ -26,7 +26,7 @@ analyzeGeneralization<-function(file){
     unSeen<-subjData[subjData$alienType%in%unSeenAliens,]
     overallAcc<-sum(accuracies)/length(accuracies)
     generalizationAcc<-sum(unSeen$accuracies)/length(unSeen$accuracies)
-    phi<-cor(subjData$codedConfs, subjData$accuracies, method = "pearson")
+    phi<-cor(subjData$confidenceRating, subjData$accuracies, method = "pearson")
     accs<-c(overallAcc,generalizationAcc, phi)
     accs
 }

@@ -82,25 +82,32 @@ class Game(object):
     blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
     predictionData = {'Block': [1], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
-    Aliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']
+    pointyAliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9']
+    roundAliens = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']
     # --- Class methods
     # Set up the game
     def __init__(self, VERSION):
         self.VERSION = VERSION
-        if VERSION == 1:
-            self.numberAliens = 30
-        elif VERSION == 2 or VERSION == 3 or VERSION == 4:
+        if VERSION == 2 or VERSION == 3 or VERSION == 4:
             self.numberAliens = 60
-        """elif VERSION == 5:
-            self.numberAliens = 4"""
+        elif VERSION == 5:
+            self.numberAliens = 30
 
         self.blockData['Condition'] = VERSION
 
-        self.Aliens_list = []
+        self.pointyAliens_list = []
         i = 1
-        while(i<=self.numberAliens):
-            self.Aliens_list.append(choice(self.Aliens))
+        while(i<=self.numberAliens/2):
+            self.pointyAliens_list.append(choice(self.pointyAliens))
             i += 1
+        self.roundAliens_list = []
+        i = 1
+        while(i<=self.numberAliens/2):
+            self.roundAliens_list.append(choice(self.roundAliens))
+            i+=1
+        self.Aliens_list = self.roundAliens_list + self.pointyAliens_list
+        shuffle(self.Aliens_list)
+        print self.Aliens_list
         self.ammo = (self.numberAliens/2)*3 #3 bullets per true 'enemy'
 
         if VERSION==2 or VERSION == 3:
@@ -119,6 +126,7 @@ class Game(object):
         self.blockScore = 0
         self.blockSuccesses = 0
         self.game_start = True
+        self.post_test = False
 
         self.t = core.Clock()
          
@@ -193,6 +201,9 @@ class Game(object):
                     if self.game_start:
                         self.game_start = False
                         self.getMetacogEval=True
+                    if self.post_test:
+                        self.post_test = False
+                        self.getMetacogEval = True
                     elif self.newBlock:
                         #record then reset score, etc.
                         self.enemy_type = 'C' #cheap trick to stop label being played
@@ -201,28 +212,37 @@ class Game(object):
                         self.blockSuccesses = 0
                         self.blockScore = 0
                         self.blockCount += 1
-                    elif self.game_over:
+                    elif self.game_over and not self.VERSION == 5:
                         """this resets up a game as post test"""
                         self.VERSION = 5
-                        self.numberAliens = 20
-                        self.Aliens_list = []
+                        self.numberAliens = 30
+                        self.pointyAliens_list = []
                         i = 1
-                        while(i<=self.numberAliens):
-                            self.Aliens_list.append(choice(self.Aliens))
+                        while(i<=self.numberAliens/2):
+                            self.pointyAliens_list.append(choice(self.pointyAliens))
                             i += 1
+                        self.roundAliens_list = []
+                        i = 1
+                        while(i<=self.numberAliens/2):
+                            self.roundAliens_list.append(choice(self.roundAliens))
+                            i+=1
+                        self.Aliens_list = self.roundAliens_list + self.pointyAliens_list
+                        shuffle(self.Aliens_list)
+                        print self.Aliens_list
                         self.ammo = (self.numberAliens/2)*3 #3 bullets per true 'enemy'
                         self.blockScore = 0
                         self.blockSuccesses = 0
-                        self.game_start = True
+                        self.post_test = True
                         self.enemy_live = False #bool to tell us if there is a live enemy
                         self.elapsedTime = 0.0 #keep track of elapsed time via frame rate change
                         self.AliensPerBlock = 10
                         self.blockCount+=1
-                        self.predictionData['Block'].append(self.blockCount)
                         Enemy.speed = 2
                         self.player.rotationSpeed = 2
                         self.player.speed = 10
                         self.game_over = False
+                    elif self.game_over and self.VERSION == 5:
+                        return True
                 elif event.key == pygame.K_s:
                     shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
                 elif event.key == pygame.K_c:
@@ -276,7 +296,7 @@ class Game(object):
         if self.sight:
             self.t.reset()
 
-        if not self.game_start and not self.game_over and not self.newBlock:
+        if not self.game_start and not self.game_over and not self.newBlock and not self.post_test:
         # Create the enemy sprites
             
             if hasattr(self, 'enemy_type') and self.elapsedTime==5.0:
@@ -524,6 +544,9 @@ class Game(object):
                             self.previousKill=False                        
 
             if len(self.Aliens_list)!=0 and (len(self.Aliens_list)%(self.AliensPerBlock)==0) and self.elapsedTime==0:
+                self.predictionData['NumberActual'].append(self.blockSuccesses)
+                self.predictionData['ScoreActual'].append(round(self.blockScore))
+                self.predictionData['Block'].append(self.blockCount)
                 self.newBlock = True
                 self.render = False
                 self.renderA = False
@@ -533,6 +556,7 @@ class Game(object):
             if len(self.Aliens_list)==0 and not self.enemy_live:
                 self.predictionData['NumberActual'].append(self.blockSuccesses)
                 self.predictionData['ScoreActual'].append(round(self.blockScore))
+                self.predictionData['Block'].append(self.blockCount)
                 self.game_over = True
 
                  
@@ -581,6 +605,14 @@ class Game(object):
                 foove = font.render("Foove", True, RED)
                 screen.blit(crelch, [380,420])
                 screen.blit(foove, [560,420])
+
+        elif self.post_test:
+            font = pygame.font.Font(None, 25)
+            text = font.render("Congratulations on making it to the second game! You will be using the same buttons for this game as the previous one.",
+                               True, WHITE)
+            text3 = font.render ("Press the Space bar to begin", True, WHITE)
+            next_line(text, -60)
+            next_line(text3, 140)
 
         elif self.getMetacogEval:
             if self.answer1:
