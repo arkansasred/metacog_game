@@ -28,8 +28,8 @@ class Game(object):
         class. """
  
     def whichVersion(version):
-        if int(version) > 5:
-            version = raw_input("Not a valid version, please input version number 1-5: ")
+        if int(version) > 4:
+            version = raw_input("Not a valid version, please input version number 1-4: ")
             return whichVersion(version)
         else:
             return version
@@ -80,7 +80,7 @@ class Game(object):
 
     #dicts that we can turn in to data frames for efficient data storage
     blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
-    predictionData = {'Block': [1], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
+    predictionData = {'Block': [], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
     pointyAliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9']
     roundAliens = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']
@@ -88,9 +88,9 @@ class Game(object):
     # Set up the game
     def __init__(self, VERSION):
         self.VERSION = VERSION
-        if VERSION == 2 or VERSION == 3 or VERSION == 4:
+        if VERSION == 1 or VERSION == 2 or VERSION == 3:
             self.numberAliens = 60
-        elif VERSION == 5:
+        elif VERSION == 4:
             self.numberAliens = 30
 
         self.blockData['Condition'] = VERSION
@@ -110,13 +110,13 @@ class Game(object):
         print self.Aliens_list
         self.ammo = (self.numberAliens/2)*3 #3 bullets per true 'enemy'
 
-        if VERSION==2 or VERSION == 3:
+        if VERSION==1 or VERSION == 2:
             #experimental
             self.fontRenderTime = 0.0
             self.fontRenderRemoval = 120.0
             self.renderA = None
             self.renderB = None
-        elif VERSION==4:
+        elif VERSION==3:
             #control
             self.renderTime = 0.0
             self.renderRemoval = 120.0
@@ -212,9 +212,9 @@ class Game(object):
                         self.blockSuccesses = 0
                         self.blockScore = 0
                         self.blockCount += 1
-                    elif self.game_over and not self.VERSION == 5:
+                    elif self.game_over and not self.VERSION == 4:
                         """this resets up a game as post test"""
-                        self.VERSION = 5
+                        self.VERSION = 4
                         self.numberAliens = 30
                         self.pointyAliens_list = []
                         i = 1
@@ -241,7 +241,7 @@ class Game(object):
                         self.player.rotationSpeed = 2
                         self.player.speed = 10
                         self.game_over = False
-                    elif self.game_over and self.VERSION == 5:
+                    elif self.game_over and self.VERSION == 4:
                         return True
                 elif event.key == pygame.K_s:
                     shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
@@ -265,17 +265,17 @@ class Game(object):
 
 
         def post_mortem():
-            if self.VERSION==2:
+            if self.VERSION==1:
+                if self.enemy_type[0] == 'A':
+                    self.renderA = True
+                elif self.enemy_type[0] == 'B':
+                    self.renderB = True
+            elif self.VERSION == 2:
                 if self.enemy_type[0] == 'A':
                     self.renderA = True
                 elif self.enemy_type[0] == 'B':
                     self.renderB = True
             elif self.VERSION == 3:
-                if self.enemy_type[0] == 'A':
-                    self.renderA = True
-                elif self.enemy_type[0] == 'B':
-                    self.renderB = True
-            elif self.VERSION == 4:
                 self.render = True
         
         def kill_enemy(enemy_type):
@@ -296,25 +296,25 @@ class Game(object):
         if self.sight:
             self.t.reset()
 
-        if not self.game_start and not self.game_over and not self.newBlock and not self.post_test:
+        if not self.game_start and not self.game_over and not self.newBlock and not self.first_trial and not self.getMetacogEval and not self.post_test:
         # Create the enemy sprites
             
-            if hasattr(self, 'enemy_type') and self.elapsedTime==5.0:
-                if self.VERSION==2:
+            if hasattr(self, 'enemy_type') and self.elapsedTime==10.0:
+                if self.VERSION==1:
                     if self.enemy_type[0] == 'A':
                         self.crelch.out()
                     elif self.enemy_type[0] == 'B':
                         self.foove.out()
+                    else:
+                        pass
+                elif self.VERSION == 2:
+                    if self.enemy_type[0] == 'A':
+                        self.foove.out()
+                    elif self.enemy_type[0] == 'B':
+                        self.crelch.out()
                     else:
                         pass
                 elif self.VERSION == 3:
-                    if self.enemy_type[0] == 'A':
-                        self.foove.out()
-                    elif self.enemy_type[0] == 'B':
-                        self.crelch.out()
-                    else:
-                        pass
-                elif self.VERSION == 4:
                     if self.enemy_type != None:
                     #play sine tone
                         self.env.play()
@@ -334,7 +334,7 @@ class Game(object):
 
                 """for every number Aliens killed/captured that is 1/4th of total Aliens, increase speed"""
 
-                if len(self.Aliens_list)<(self.numberAliens-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberAliens//5)) == 0 and not self.VERSION == 5:
+                if len(self.Aliens_list)<(self.numberAliens-1) and self.previousKill and (sum(self.blockData['Success'])%(self.numberAliens//5)) == 0 and not self.VERSION == 4:
                     self.player.rotationSpeed+=1
                     Enemy.speed+=1
                     self.player.speed+=1
@@ -595,12 +595,12 @@ class Game(object):
             next_line(text3, 140)
             screen.blit(shoot, [560,380])
             screen.blit(capture, [370,380])
-            if self.isCrelchEnemy and self.VERSION == 2 or self.VERSION == 3:
+            if self.isCrelchEnemy and self.VERSION == 1 or self.VERSION == 2:
                 crelch = font.render("Crelch", True, RED)
                 foove = font.render("Foove", True, GREEN)
                 screen.blit(crelch, [560,420])
                 screen.blit(foove, [380,420])
-            elif not self.isCrelchEnemy and self.VERSION == 2 or self.VERSION == 3:
+            elif not self.isCrelchEnemy and self.VERSION == 1 or self.VERSION == 2:
                 crelch = font.render("Crelch", True, GREEN)
                 foove = font.render("Foove", True, RED)
                 screen.blit(crelch, [380,420])
@@ -735,7 +735,7 @@ class Game(object):
                     self.player.target = None
                     self.isExplosion_player = False
 
-            if self.VERSION==2:
+            if self.VERSION==1:
                 if self.renderA and self.fontRenderTime<self.fontRenderRemoval:
                     font = pygame.font.Font(None, 20)
                     text = font.render("Crelch", True, WHITE)
@@ -755,7 +755,7 @@ class Game(object):
                         self.renderB = False
                         self.fontRenderTime = 0.0
 
-            if self.VERSION==3:
+            elif self.VERSION==2:
                 if self.renderA and self.fontRenderTime<self.fontRenderRemoval:
                     font = pygame.font.Font(None, 20)
                     text = font.render("Foove", True, WHITE)
@@ -775,7 +775,7 @@ class Game(object):
                         self.renderB = False
                         self.fontRenderTime = 0.0
 
-            elif self.VERSION==4:            
+            elif self.VERSION==3:            
                 if self.render and self.renderTime<self.renderRemoval:
                     screen.blit(self.enemy.image, [self.enemy.rect.x,self.enemy.rect.y])
                     self.renderTime+=1.0

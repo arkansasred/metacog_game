@@ -11,27 +11,21 @@ import pandas as pd
          
 def main():
     def checkData(subj):
-        if VERSION==2:
+        if VERSION==1:
             if path.exists("Subject %s/LabelsCongruent/"%subj):
                 subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
                 return checkData(subj)
-        elif VERSION==3:
+        elif VERSION==2:
             if path.exists("Subject %s/LabelsIncongruent/"%subj):
                 subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
                 return checkData(subj)
-        elif VERSION==4:
+        elif VERSION==3:
             if path.exists("Subject %s/NoLabels/"%subj):
                 subj = raw_input("Data already exists for that subject, Please choose a different subject number: ")
                 return checkData(subj)
         return subj
     
-    CONDITION = int(raw_input("Condition (1-3): "))
-    if CONDITION == 1:
-        VERSION = 2
-    elif CONDITION == 2:
-        VERSION = 3
-    elif CONDITION == 3:
-        VERSION = 4
+    VERSION = int(raw_input("Condition (1-3): "))
     SUBJECT = checkData(subj = raw_input("Subject Number: "))
     if not path.exists("Subject %s"%SUBJECT):
         mkdir("Subject %s"%SUBJECT)
@@ -80,15 +74,15 @@ def main():
         # Pause for the next frame
         clock.tick(FPS)
 
-    if CONDITION==1:
+    if VERSION==1:
         directory="Subject %s/LabelsCongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif CONDITION==2:
+    elif VERSION==2:
         directory = "Subject %s/LabelsIncongruent/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
-    elif CONDITION==3:
+    elif VERSION==3:
         directory = "Subject %s/NoLabels/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
