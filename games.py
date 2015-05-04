@@ -610,18 +610,18 @@ class Game(object):
             next_line(text, -60)
             next_line(text2, -25)
             next_line(text3, 140)
-            screen.blit(shoot, [560,380])
-            screen.blit(capture, [370,380])
+            screen.blit(capture, [560,380])
+            screen.blit(shoot, [370,380])
             if self.isCrelchEnemy and self.VERSION == 1 or self.VERSION == 2:
                 crelch = font.render("Crelch", True, RED)
                 foove = font.render("Foove", True, GREEN)
-                screen.blit(crelch, [560,420])
-                screen.blit(foove, [380,420])
+                screen.blit(foove, [560,420])
+                screen.blit(crelch, [380,420])
             elif not self.isCrelchEnemy and self.VERSION == 1 or self.VERSION == 2:
                 crelch = font.render("Crelch", True, GREEN)
                 foove = font.render("Foove", True, RED)
-                screen.blit(crelch, [380,420])
-                screen.blit(foove, [560,420])
+                screen.blit(foove, [380,420])
+                screen.blit(crelch, [560,420])
 
         elif self.post_test:
             font = pygame.font.Font(None, 22)
