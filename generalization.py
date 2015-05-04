@@ -23,7 +23,7 @@ if not path.exists("Subject %s/Generalization"%SUBJECT):
 	mkdir("Subject %s/Generalization"%SUBJECT)
 
 win = visual.Window(monitor="testMonitor", units="deg", allowGUI=False, fullscr = True)
-intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use 'Space' and 'Enter' to indicate whether you would 'Shoot' or 'Capture' the Aliens. Press Space to begin.", wrapWidth=20, alignHoriz="center")
+intro = visual.TextStim(win, text="You will be presented with a series of aliens, please use 's' and 'c' to indicate whether you would 'Shoot' or 'Capture' the Aliens. Press Space to begin.", wrapWidth=20, alignHoriz="center")
 
 question = visual.TextStim(win, text="Capture or Shoot?", color='Black', pos=(0,8), wrapWidth=20)
 answer = visual.TextStim(win, text="'s'								        'c'", color='Black', pos=(0,-2), wrapWidth=20, bold = True)
@@ -33,6 +33,7 @@ reminder = visual.TextStim(win,text="Shoot 							  	Capture", color='Black', po
 confidenceQuestion = visual.TextStim(win, text="How confident are you in your judgment", color = 'Black', pos = (0,4), wrapWidth=20)
 confidenceResponse = visual.TextStim(win, text="1			2	 		3			4			5", color='Black', pos=(0,-4), wrapWidth=20)
 confidenceReminder = visual.TextStim(win, text="Not at all Confident 					 Very Confident", color = 'Black', pos=(0,0), wrapWidth=40)
+end = visual.TextStim(win, text = "You have completed this portion of the experiment, please alert the experimenter.", alignHoriz = "center", wrapWidth = 25)
 
 fixation = visual.TextStim(win,text="+", pos=(0,0))
 fixation.size = 2
@@ -66,7 +67,7 @@ while True:
 			start = False
 			newPair = True
 
-	if newPair:
+	if newPair and len(enemies)>0:
 		fixation.draw()
 		win.flip()
 		core.wait(1.5)
@@ -106,10 +107,18 @@ while True:
 			confidenceRating = (responseKeys.pop())
 			data['confidenceRating'].append(confidenceRating)
 			if len(enemies)==0:
-				break
-			confidence = False
-			newPair = True
+				finalScreen = True
+				confidence = False
+			else:
+				confidence = False
+				newPair = True
 		event.clearEvents()
+
+	elif finalScreen and not confidence and not aliens and not newPair:
+		end.draw()
+		win.flip()
+		if len(event.waitKeys())>0:
+			break
 
 
 #cleanup

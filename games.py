@@ -79,7 +79,7 @@ class Game(object):
     blockCount = 1
 
     #dicts that we can turn in to data frames for efficient data storage
-    blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
+    blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'EnemySpeed':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
     predictionData = {'Block': [], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
     pointyAliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9']
@@ -127,6 +127,7 @@ class Game(object):
         self.blockSuccesses = 0
         self.game_start = True
         self.post_test = False
+        self.first_trial = True
 
         self.t = core.Clock()
          
@@ -212,6 +213,7 @@ class Game(object):
                         self.blockSuccesses = 0
                         self.blockScore = 0
                         self.blockCount += 1
+                        self.first_trial = True
                     elif self.game_over and not self.VERSION == 4:
                         """this resets up a game as post test"""
                         self.VERSION = 4
@@ -237,6 +239,7 @@ class Game(object):
                         self.elapsedTime = 0.0 #keep track of elapsed time via frame rate change
                         self.AliensPerBlock = 10
                         self.blockCount+=1
+                        self.first_trial = True
                         Enemy.speed = 2
                         self.player.rotationSpeed = 2
                         self.player.speed = 10
@@ -282,6 +285,7 @@ class Game(object):
             font = pygame.font.Font(None, 25)
             RT = self.t.getTime()
             self.blockData['TotalTime'].append(RT)
+            self.blockData['EnemySpeed'].append(Enemy.speed)
             self.blockData['Success'].append(1)
             self.blockData['EnemyHitPlayer'].append(0)
             self.blockData['Block'].append(self.blockCount)
@@ -296,10 +300,10 @@ class Game(object):
         if self.sight:
             self.t.reset()
 
-        if not self.game_start and not self.game_over and not self.newBlock and not self.first_trial and not self.getMetacogEval and not self.post_test:
+        if not self.game_start and not self.game_over and not self.newBlock and not self.getMetacogEval and not self.post_test:
         # Create the enemy sprites
             
-            if hasattr(self, 'enemy_type') and self.elapsedTime==10.0:
+            if hasattr(self, 'enemy_type') and self.elapsedTime==10.0 and not self.first_trial:
                 if self.VERSION==1:
                     if self.enemy_type[0] == 'A':
                         self.crelch.out()
@@ -324,6 +328,8 @@ class Game(object):
                 self.blockData["EnemyType"].append(self.enemy_type)
                 self.enemy = Enemy(self.enemy_type)
                 self.enemy.generate()
+                if self.first_trial:
+                    self.first_trial = False
                 self.all_sprites_list.add(self.enemy)
                 
                 if self.enemy_type[0]=='A':
@@ -372,6 +378,7 @@ class Game(object):
                     if pygame.sprite.spritecollide(bullet, self.alienB_list, True):
                         RT = self.t.getTime()
                         self.blockData['TotalTime'].append(RT)
+                        self.blockData['EnemySpeed'].append(Enemy.speed)
                         self.blockData['Success'].append(0)
                         self.blockData['EnemyHitPlayer'].append(0)
                         self.blockData['Block'].append(self.blockCount)
@@ -396,6 +403,7 @@ class Game(object):
                     if pygame.sprite.spritecollide(bullet, self.alienA_list, True):
                         RT = self.t.getTime()
                         self.blockData['TotalTime'].append(RT)
+                        self.blockData['EnemySpeed'].append(Enemy.speed)
                         self.blockData['Success'].append(0)
                         self.blockData['EnemyHitPlayer'].append(0)
                         self.blockData['Block'].append(self.blockCount)
@@ -418,6 +426,7 @@ class Game(object):
                 if pygame.sprite.spritecollide(self.player, self.alienB_list, True):
                     RT = self.t.getTime()
                     self.blockData['TotalTime'].append(RT)
+                    self.blockData['EnemySpeed'].append(Enemy.speed)
                     self.blockData['Success'].append(0)
                     self.blockData['EnemyHitPlayer'].append(1)
                     self.blockData['Block'].append(self.blockCount)
@@ -435,6 +444,7 @@ class Game(object):
                 if pygame.sprite.spritecollide(self.player, self.alienA_list, True):
                     RT = self.t.getTime()
                     self.blockData['TotalTime'].append(RT)
+                    self.blockData['EnemySpeed'].append(Enemy.speed)
                     self.blockData['Success'].append(0)
                     self.blockData['EnemyHitPlayer'].append(1)
                     self.blockData['Block'].append(self.blockCount)
@@ -459,6 +469,7 @@ class Game(object):
                         else:
                             RT = self.t.getTime()
                             self.blockData['TotalTime'].append(RT)
+                            self.blockData['EnemySpeed'].append(Enemy.speed)
                             self.blockData['Success'].append(0)
                             self.blockData['EnemyHitPlayer'].append(1)
                             self.blockData['Block'].append(self.blockCount)
@@ -472,6 +483,7 @@ class Game(object):
                         if not self.enemy.targetReached:
                             RT = self.t.getTime()
                             self.blockData['TotalTime'].append(RT)
+                            self.blockData['EnemySpeed'].append(Enemy.speed)
                             self.blockData['Success'].append(0)
                             self.blockData['EnemyHitPlayer'].append(0)
                             self.blockData['Block'].append(self.blockCount)      
@@ -486,6 +498,7 @@ class Game(object):
                         else:
                             RT = self.t.getTime()
                             self.blockData['TotalTime'].append(RT)
+                            self.blockData['EnemySpeed'].append(Enemy.speed)
                             self.blockData['Success'].append(0)
                             self.blockData['EnemyHitPlayer'].append(1)
                             self.blockData['Block'].append(self.blockCount)
@@ -502,6 +515,7 @@ class Game(object):
                         if not self.enemy.targetReached:
                             RT = self.t.getTime()
                             self.blockData['TotalTime'].append(RT)
+                            self.blockData['EnemySpeed'].append(Enemy.speed)
                             self.blockData['Success'].append(0)
                             self.blockData['EnemyHitPlayer'].append(0)
                             self.blockData['Block'].append(self.blockCount)      
@@ -516,6 +530,7 @@ class Game(object):
                         else:
                             RT = self.t.getTime()
                             self.blockData['TotalTime'].append(RT)
+                            self.blockData['EnemySpeed'].append(Enemy.speed)
                             self.blockData['Success'].append(0)
                             self.blockData['EnemyHitPlayer'].append(1)
                             self.blockData['Block'].append(self.blockCount)
@@ -533,6 +548,7 @@ class Game(object):
                         else:
                             RT = self.t.getTime()
                             self.blockData['TotalTime'].append(RT)
+                            self.blockData['EnemySpeed'].append(Enemy.speed)
                             self.blockData['Success'].append(0)
                             self.blockData['EnemyHitPlayer'].append(1)
                             self.blockData['Block'].append(self.blockCount)
@@ -548,6 +564,7 @@ class Game(object):
                 self.predictionData['ScoreActual'].append(round(self.blockScore))
                 self.predictionData['Block'].append(self.blockCount)
                 self.newBlock = True
+                self.first_trial = True
                 self.render = False
                 self.renderA = False
                 self.renderB = False
@@ -586,7 +603,7 @@ class Game(object):
             font = pygame.font.Font(None, 25)
             text = font.render("Hello, thank you for participating in this experiment! You will be using the following buttons for this game:",
                                True, WHITE)
-            text2 = font.render("Space:                      Enter:", True, WHITE)
+            text2 = font.render("'s':                      'c':", True, WHITE)
             text3 = font.render ("Press the Space bar to begin", True, WHITE)
             shoot = font.render("SHOOT",True, RED)
             capture = font.render("CAPTURE", True, GREEN)
@@ -607,7 +624,7 @@ class Game(object):
                 screen.blit(foove, [560,420])
 
         elif self.post_test:
-            font = pygame.font.Font(None, 25)
+            font = pygame.font.Font(None, 22)
             text = font.render("Congratulations on making it to the second game! You will be using the same buttons for this game as the previous one.",
                                True, WHITE)
             text3 = font.render ("Press the Space bar to begin", True, WHITE)
@@ -626,14 +643,14 @@ class Game(object):
 
         elif self.game_over:  
             font = pygame.font.Font(None, 18)
-            font2 = pygame.font.Font(None, 25)
+            font2 = pygame.font.Font(None, 24)
             text2 = font.render("You just successfully killed or captured a total of "+ str(self.blockSuccesses) +
                                 " of the " + str(self.AliensPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
             screen.blit(text2, [center_x, center_y])
-            text3 = font2.render("Overall, you successfully killed or captured a total of "+ str(sum(self.blockData['Success'])) +
+            text3 = font2.render("In the two games, you successfully killed or captured a total of "+ str(sum(self.blockData['Success'])) +
                                 " of the " + str(len(self.blockData['Success'])) + " aliens you encountered, for a total score of {:.0f}".format(sum(self.predictionData["ScoreActual"])),
                                 True, GREEN)
             center_x = (SCREEN_WIDTH // 2) - (text3.get_width() // 2)
