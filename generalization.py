@@ -31,15 +31,15 @@ reminder = visual.TextStim(win,text="Shoot 							  	Capture", color='Black', po
 
 
 confidenceQuestion = visual.TextStim(win, text="How confident are you in your judgment", color = 'Black', pos = (0,4), wrapWidth=20)
-confidenceResponse = visual.TextStim(win, text="1			2	 		3			4			5", color='Black', pos=(0,-4), wrapWidth=20)
-confidenceReminder = visual.TextStim(win, text="Not at all Confident 					 Very Confident", color = 'Black', pos=(0,0), wrapWidth=40)
+confidenceResponse = visual.TextStim(win, text="       1					2			 		3					4", color='Black', pos=(0,-4), wrapWidth=40)
+confidenceReminder = visual.TextStim(win, text="Not at all Confident        						        Very Confident", color = 'Black', pos=(0,0), wrapWidth=40)
 end = visual.TextStim(win, text = "You have completed this portion of the experiment, please alert the experimenter.", alignHoriz = "center", wrapWidth = 25)
 
 fixation = visual.TextStim(win,text="+", pos=(0,0))
 fixation.size = 2
 
 
-eachEnemy = 4  #total number of times they see each enemy
+eachEnemy = 1  #total number of times they see each enemy
 enemyATypes = listdir("Images/Enemies/EnemyA")
 enemyA = ["Images/Enemies/EnemyA/{0}".format(i) for i in enemyATypes if not i.startswith('.')]
 enemyA = [visual.ImageStim(win, A, pos=(0,0), size=(4,4), units="deg", name=A[-7:-4]) for A in enemyA]

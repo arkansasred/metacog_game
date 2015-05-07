@@ -1,12 +1,21 @@
-analyzeGeneralization<-function(file){
+analyzeGeneralization<-function(file, balance){
     unSeenAliens<-c("A04", "A06", "A10", "A12", "B08", "B09", "B11", "B12")
-    subjData<-read.table(file,sep=",", col.names = c("alienType","response", "confidenceRating", "RT"))
-    subjData$alienType<-as.character(subjData$alienType)
+    subjData<-read.csv(file)
+    ratings<-vector()
+    response<-vector()
     getAccur<-function(alien,response){
-        if((substr(alien,1,1)=='A' & response == 'return') | (substr(alien,1,1)=='B' & response=='space')){
-            1
+        if (balance == 0){
+            if((substr(alien,1,1)=='A' & response == 'c') | (substr(alien,1,1)=='B' & response=='s')){
+                1
+            }
+            else{0}
         }
-        else{0}
+        else if (balance == 1){
+            if((substr(alien,1,1)=='A' & response == 's') | (substr(alien,1,1)=='B' & response=='c')){
+                1
+            }
+            else{0}
+        }
     }
     codeConf<-function(rating){
         if(rating>3){

@@ -51,7 +51,7 @@ class Game(object):
     elapsedTime = 0.0 #keep track of elapsed time via frame rate changes
     enemySpawnTime= 120.0 # of frames between enemy death and next enemy spawn
 
-    #for transitioning from training to post test
+    #for transitioning from training to post test, and end of games
     game_over = False
 
     #this is for making animated explosions
@@ -643,19 +643,23 @@ class Game(object):
 
         elif self.game_over:  
             font = pygame.font.Font(None, 18)
-            font2 = pygame.font.Font(None, 24)
+            font2 = pygame.font.Font(None, 25)
             text2 = font.render("You just successfully killed or captured a total of "+ str(self.blockSuccesses) +
                                 " of the " + str(self.AliensPerBlock) + " aliens you encountered, for a score of %d."%(self.blockScore),
                                 True, GREEN)
-            center_x = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
-            center_y = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) + 2
-            screen.blit(text2, [center_x, center_y])
-            text3 = font2.render("In the two games, you successfully killed or captured a total of "+ str(sum(self.blockData['Success'])) +
-                                " of the " + str(len(self.blockData['Success'])) + " aliens you encountered, for a total score of {:.0f}".format(sum(self.predictionData["ScoreActual"])),
+            center_x2 = (SCREEN_WIDTH // 2) - (text2.get_width() // 2)
+            center_y2 = (SCREEN_HEIGHT // 2) + (text2.get_height() // 2) - 60
+            screen.blit(text2, [center_x2, center_y2])
+            text3 = font.render("In total, you successfully killed or captured "+ str(sum(self.blockData['Success'])) +
+                                " of the " + str(len(self.blockData['Success'])) + " aliens you encountered, for a score of {:.0f}".format(sum(self.predictionData["ScoreActual"])),
                                 True, GREEN)
-            center_x = (SCREEN_WIDTH // 2) - (text3.get_width() // 2)
-            center_y = (SCREEN_HEIGHT // 2) + (text3.get_height() // 2) + 40
-            screen.blit(text3, [center_x, center_y])  
+            text4 = font2.render("Please alert the experimenter.", True, GREEN)
+            center_x3 = (SCREEN_WIDTH // 2) - (text3.get_width() // 2)
+            center_y3 = (SCREEN_HEIGHT // 2) + (text3.get_height() // 2)
+            screen.blit(text3, [center_x3, center_y3])
+            center_x4 = (SCREEN_WIDTH // 2) - (text4.get_width() // 2)
+            center_y4 = (SCREEN_HEIGHT // 2) + (text4.get_height() // 2) + 60
+            screen.blit(text4,[center_x4, center_y4]) 
             
          
         else:
