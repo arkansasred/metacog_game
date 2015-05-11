@@ -39,7 +39,7 @@ fixation = visual.TextStim(win,text="+", pos=(0,0))
 fixation.size = 2
 
 
-eachEnemy = 1  #total number of times they see each enemy
+eachEnemy = 4  #total number of times they see each enemy
 enemyATypes = listdir("Images/Enemies/EnemyA")
 enemyA = ["Images/Enemies/EnemyA/{0}".format(i) for i in enemyATypes if not i.startswith('.')]
 enemyA = [visual.ImageStim(win, A, pos=(0,0), size=(4,4), units="deg", name=A[-7:-4]) for A in enemyA]
