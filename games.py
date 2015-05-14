@@ -94,6 +94,7 @@ class Game(object):
             self.numberAliens = 30
 
         self.blockData['Condition'] = VERSION
+        self.predictionData['Condition'] = VERSION
 
         self.pointyAliens_list = []
         i = 1
