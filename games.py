@@ -80,7 +80,7 @@ class Game(object):
 
     #dicts that we can turn in to data frames for efficient data storage
     blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'EnemySpeed':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
-    predictionData = {'Block': [], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
+    predictionData = {'Balance': isCrelchEnemy,'Block': [], 'ScorePrediction':[], 'NumberPrediction':[], "ScoreActual":[], "NumberActual":[]}
 
     pointyAliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9']
     roundAliens = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']
@@ -94,6 +94,7 @@ class Game(object):
             self.numberAliens = 30
 
         self.blockData['Condition'] = VERSION
+        self.predictionData['Condition'] = VERSION
 
         self.pointyAliens_list = []
         i = 1

@@ -1,6 +1,11 @@
-analyzeGeneralization<-function(file, balance){
-    unSeenAliens<-c("A04", "A06", "A10", "A12", "B08", "B09", "B11", "B12")
-    subjData<-read.csv(file)
+analyzeGeneralization<-function(subject, balance){
+    require(stringr)
+    unSeenAliens<-c("A04", "A10", "A11", "A12", "B08", "B09", "B11", "B12")
+    file <- str_join(subject,"/Generalization/generalization.csv")
+    subjData<-read.csv(file, stringsAsFactors = F)
+    info<-read.csv(str_join(subject, "/Game/generalData.csv"))
+    balance<-info[1,"Balance"]
+    condition<-info[1, "Condition"]
     ratings<-vector()
     response<-vector()
     getAccur<-function(alien,response){
@@ -36,6 +41,18 @@ analyzeGeneralization<-function(file, balance){
     overallAcc<-sum(accuracies)/length(accuracies)
     generalizationAcc<-sum(unSeen$accuracies)/length(unSeen$accuracies)
     phi<-cor(subjData$confidenceRating, subjData$accuracies, method = "pearson")
-    accs<-c(overallAcc,generalizationAcc, phi)
+    accs<-data.frame(subject,condition,overallAcc,generalizationAcc, phi)
     accs
+}
+
+readAll<-function(){
+    require(stringr)
+    dirs<-list.dirs(recursive = FALSE)
+    dirs_of_interest<-dirs[grepl("Subject", dirs)]
+    accuracies<-data.frame()
+    for (i in 1:length(dirs_of_interest)){
+        accuracies<-rbind(accuracies, analyzeGeneralization(dirs_of_interest[i]))
+    }
+    names(accuracies)<-c("Subject", "Condition", "Overall", "Gen", "Phi")
+    accuracies
 }
