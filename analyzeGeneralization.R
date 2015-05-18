@@ -41,7 +41,9 @@ analyzeGeneralization<-function(subject, balance){
     overallAcc<-sum(accuracies)/length(accuracies)
     generalizationAcc<-sum(unSeen$accuracies)/length(unSeen$accuracies)
     phi<-cor(subjData$confidenceRating, subjData$accuracies, method = "pearson")
-    accs<-data.frame(subject,condition,overallAcc,generalizationAcc, phi)
+    Subject<-gsub("^.*Subject+\\s", "", subject)
+    Subject<-as.integer(Subject)
+    accs<-data.frame(Subject,condition,overallAcc,generalizationAcc, phi)
     accs
 }
 
@@ -54,5 +56,5 @@ readAll<-function(){
         accuracies<-rbind(accuracies, analyzeGeneralization(dirs_of_interest[i]))
     }
     names(accuracies)<-c("Subject", "Condition", "Overall", "Gen", "Phi")
-    accuracies
+    accuracies<-accuracies[do.call(order,accuracies),]
 }

@@ -75,15 +75,15 @@ def main():
         clock.tick(FPS)
 
     if VERSION==1:
-        directory="Subject %s/LabelsCongruent/"%SUBJECT
+        directory="Subject %s/Game/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
     elif VERSION==2:
-        directory = "Subject %s/LabelsIncongruent/"%SUBJECT
+        directory = "Subject %s/Game/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
     elif VERSION==3:
-        directory = "Subject %s/NoLabels/"%SUBJECT
+        directory = "Subject %s/Game/"%SUBJECT
         if not path.exists(directory):
             mkdir(directory)
 
