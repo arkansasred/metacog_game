@@ -49,6 +49,7 @@ analyzeGeneralization<-function(subject, balance){
 
 readAll<-function(){
     require(stringr)
+    require(dplyr)
     dirs<-list.dirs(recursive = FALSE)
     dirs_of_interest<-dirs[grepl("Subject", dirs)]
     accuracies<-data.frame()
@@ -57,4 +58,10 @@ readAll<-function(){
     }
     names(accuracies)<-c("Subject", "Condition", "Overall", "Gen", "Phi")
     accuracies<-accuracies[do.call(order,accuracies),]
+    accuracies
+    #accuracies.tbl<-tbl_df(accuracies)
+    #summary<-accuracies.tbl%>%
+     #group_by(Condition)%>%
+      #  summarise_each(funs(mean), -Subject)
+    #summary
 }
