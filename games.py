@@ -613,12 +613,12 @@ class Game(object):
             next_line(text3, 140)
             screen.blit(capture, [560,380])
             screen.blit(shoot, [370,380])
-            if self.isCrelchEnemy and self.VERSION == 1 or self.VERSION == 2:
+            if (self.isCrelchEnemy and self.VERSION == 1) or (not self.isCrelchEnemy and self.VERSION == 2):
                 crelch = font.render("Crelch", True, RED)
                 foove = font.render("Foove", True, GREEN)
                 screen.blit(foove, [560,420])
                 screen.blit(crelch, [380,420])
-            elif not self.isCrelchEnemy and self.VERSION == 1 or self.VERSION == 2:
+            elif (not self.isCrelchEnemy and self.VERSION == 1) or (self.isCrelchEnemy and self.VERSION == 2):
                 crelch = font.render("Crelch", True, GREEN)
                 foove = font.render("Foove", True, RED)
                 screen.blit(foove, [380,420])
