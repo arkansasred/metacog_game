@@ -1,5 +1,6 @@
-analyzeGeneralization<-function(subject, balance){
+analyzeGeneralization<-function(subject){
     require(stringr)
+    require(vcdExtra)
     unSeenAliens<-c("A04", "A10", "A11", "A12", "B08", "B09", "B11", "B12")
     file <- str_join(subject,"/Generalization/generalization.csv")
     subjData<-read.csv(file, stringsAsFactors = F)
@@ -23,7 +24,7 @@ analyzeGeneralization<-function(subject, balance){
         }
     }
     codeConf<-function(rating){
-        if(rating>3){
+        if(rating>2){
             1
         }
         else{0}
@@ -37,27 +38,34 @@ analyzeGeneralization<-function(subject, balance){
         codedConfs<-c(codedConfs, conf)
     }
     subjData<-cbind(subjData,accuracies, codedConfs)
+    subjTbl<-table(subjData$accuracies, subjData$codedConfs)
+    gamma<-GKgamma(subjTbl)
     unSeen<-subjData[subjData$alienType%in%unSeenAliens,]
     overallAcc<-sum(accuracies)/length(accuracies)
     generalizationAcc<-sum(unSeen$accuracies)/length(unSeen$accuracies)
     phi<-cor(subjData$confidenceRating, subjData$accuracies, method = "pearson")
     Subject<-gsub("^.*Subject+\\s", "", subject)
     Subject<-as.integer(Subject)
-    accs<-data.frame(Subject,condition,overallAcc,generalizationAcc, phi)
+    accs<-data.frame(Subject,condition,overallAcc,generalizationAcc, gamma$gamma, phi)
     accs
 }
 
-readAll<-function(){
+readAllGen<-function(){
     require(stringr)
     require(dplyr)
+    require(ggplot2)
+    require(Rmisc)
     dirs<-list.dirs(recursive = FALSE)
     dirs_of_interest<-dirs[grepl("Subject", dirs)]
     accuracies<-data.frame()
     for (i in 1:length(dirs_of_interest)){
         accuracies<-rbind(accuracies, analyzeGeneralization(dirs_of_interest[i]))
     }
-    names(accuracies)<-c("Subject", "Condition", "Overall", "Gen", "Phi")
+    names(accuracies)<-c("Subject", "Condition", "Overall", "Gen", "Gamma", "Phi")
     accuracies<-accuracies[do.call(order,accuracies),]
+    #barplot with standard errors
+    mse<-summarySE(accuracies, measurevar = "Overall", groupvars = "Condition")
+    ggplot(mse, aes (x = factor(Condition), y = Overall, fill = factor(Condition))) + geom_bar(stat = "identity")+ geom_errorbar(aes(ymin=Overall-se, ymax=Overall+se), width=.1)
     accuracies
     #accuracies.tbl<-tbl_df(accuracies)
     #summary<-accuracies.tbl%>%
