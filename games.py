@@ -77,6 +77,12 @@ class Game(object):
     AliensPerBlock = 10
     previousKill= False #helps keep track of whether previous trial was successful
     blockCount = 1
+    verificationTrials = False
+    verificationResponses = []
+    verificationStimuli = []
+    trialCount = 1
+    nTrials = 4
+    responseRecorded = True
 
     #dicts that we can turn in to data frames for efficient data storage
     blockData = {'Balance': isCrelchEnemy, 'Block':[], 'EnemyType':[], 'EnemySpeed':[], 'TotalTime':[], "Success":[], "EnemyHitPlayer":[]}
@@ -84,6 +90,7 @@ class Game(object):
 
     pointyAliens = ['A1', 'A2', 'A3', 'A5', 'A6', 'A7', 'A8', 'A9']
     roundAliens = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']
+    allAliens = pointyAliens + roundAliens
     # --- Class methods
     # Set up the game
     def __init__(self, VERSION):
@@ -251,6 +258,30 @@ class Game(object):
                     shoot(RED, self.player.currTarget, self.player.degree, (self.player.trueX,self.player.trueY))
                 elif event.key == pygame.K_c:
                     self.player.capture()
+                elif event.key == pygame.K_1:
+                    if self.verificationTrials and self.trialCount<self.nTrials:
+                        response = "A"
+                        self.verificationResponses.append(response)
+                        self.responseRecorded = True
+                        self.trialCount += 1
+                    elif self.verificationTrials and self.trialCount==self.nTrials:
+                        response = "A"
+                        self.verificationResponses.append(response)
+                        self.verificationTrials = False
+                        self.newBlock = True
+                        self.trialCount = 1
+                elif event.key == pygame.K_2:
+                    if self.verificationTrials and self.trialCount<self.nTrials:
+                        response = "B"
+                        self.verificationResponses.append(response)
+                        self.responseRecorded = True
+                        self.trialCount += 1
+                    elif self.verificationTrials and self.trialCount==self.nTrials:
+                        response = "B"
+                        self.verificationResponses.append(response)
+                        self.verificationTrials = False
+                        self.newBlock = True
+                        self.trialCount = 1
                 elif event.key == pygame.K_ESCAPE:
                     return True
             elif event.type == pygame.KEYUP:
@@ -564,7 +595,10 @@ class Game(object):
                 self.predictionData['NumberActual'].append(self.blockSuccesses)
                 self.predictionData['ScoreActual'].append(round(self.blockScore))
                 self.predictionData['Block'].append(self.blockCount)
-                self.newBlock = True
+                if self.VERSION == 1:
+                    self.verificationTrials = True
+                elif self.VERSION == 2:
+                    self.newBlock = True
                 self.first_trial = True
                 self.render = False
                 self.renderA = False
@@ -588,6 +622,94 @@ class Game(object):
             center_x = (SCREEN_WIDTH // 2) - (text.get_width() // 2)
             center_y = (SCREEN_HEIGHT // 2) - (text.get_height() // 2) + spacing
             screen.blit(text, [center_x,center_y])
+
+        def generate_image():
+            alienType = choice(self.allAliens)
+            self.verificationStimuli.append(alienType)
+            if alienType == 'A1':
+                image = pygame.image.load(Enemy.enemyA_images[0])
+            
+            elif alienType == 'A2':
+                image = pygame.image.load(Enemy.enemyA_images[1])
+
+            elif alienType == 'A3':
+                image = pygame.image.load(Enemy.enemyA_images[2])
+
+            elif alienType == 'A4':
+                image = pygame.image.load(Enemy.enemyA_images[3])
+            
+            elif alienType == 'A5':
+                image = pygame.image.load(Enemy.enemyA_images[4])
+
+            elif alienType == 'A6':
+                image = pygame.image.load(Enemy.enemyA_images[5])
+            
+            elif alienType == 'A7':
+                image = pygame.image.load(Enemy.enemyA_images[6])
+
+            elif alienType == 'A8':
+                image = pygame.image.load(Enemy.enemyA_images[7])
+            
+            elif alienType == 'A9':
+                image = pygame.image.load(Enemy.enemyA_images[8])
+
+            elif alienType == 'A10':
+                image = pygame.image.load(Enemy.enemyA_images[9])
+
+            elif alienType == 'A11':
+                image = pygame.image.load(Enemy.enemyA_images[10])
+
+            elif alienType == 'A12':
+                image = pygame.image.load(Enemy.enemyA_images[11])
+
+            if alienType == 'B1':
+                image = pygame.image.load(Enemy.enemyB_images[0])
+            
+            elif alienType == 'B2':
+                image = pygame.image.load(Enemy.enemyB_images[1])
+
+            elif alienType == 'B3':
+                image = pygame.image.load(Enemy.enemyB_images[2])
+
+            elif alienType == 'B4':
+                image = pygame.image.load(Enemy.enemyB_images[3])
+            
+            elif alienType == 'B5':
+                image = pygame.image.load(Enemy.enemyB_images[4])
+
+            elif alienType == 'B6':
+                image = pygame.image.load(Enemy.enemyB_images[5])
+            
+            elif alienType == 'B7':
+                image = pygame.image.load(Enemy.enemyB_images[6])
+
+            elif alienType == 'B8':
+                image = pygame.image.load(Enemy.enemyB_images[7])
+
+            elif alienType == 'B9':
+                image = pygame.image.load(Enemy.enemyB_images[8])
+
+            elif alienType == 'B10':
+                image = pygame.image.load(Enemy.enemyB_images[9])
+
+            elif alienType == 'B11':
+                image = pygame.image.load(Enemy.enemyB_images[10])
+
+            elif alienType == 'B12':
+                image = pygame.image.load(Enemy.enemyB_images[11])
+            
+            image = pygame.transform.smoothscale(image, (85,85))
+            image.set_colorkey(WHITE)
+            return image
+
+
+        def display_verification_trial(image):
+            screen.blit(image, (SCREEN_WIDTH - image.get_width(), SCREEN_HEIGHT - image.get_height()))
+            font = pygame.font.Font(None, 25)
+            text1 = font.render("1                 2", True, GREEN)
+            text2 = font.render("A                 B", True, GREEN)
+            next_line(text1, -60)
+            next_line(text2, -100)
 
         if self.newBlock:  
             font = pygame.font.Font(None, 25)
@@ -623,6 +745,14 @@ class Game(object):
                 foove = font.render("Foove", True, RED)
                 screen.blit(foove, [380,420])
                 screen.blit(crelch, [560,420])
+
+        elif self.verificationTrials:
+            if self.responseRecorded:
+                self.img = generate_image()
+                self.responseRecorded = False
+            else:
+                display_verification_trial(self.img)
+
 
         elif self.post_test:
             font = pygame.font.Font(None, 22)

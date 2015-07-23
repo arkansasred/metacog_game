@@ -143,3 +143,7 @@ class Enemy(pygame.sprite.Sprite):
             if t_dist < speed*2:
                 self.target = None
                 self.targetReached = True
+
+    def display_at_center(self):
+        self.rect.x = SCREEN_WIDTH - self.image.get_width()
+        self.rect.y = SCREEN_HEIGHT - self.image.get_height()
