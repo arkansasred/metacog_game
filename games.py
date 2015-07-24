@@ -6,7 +6,7 @@ from bullet import Bullet
 from enemy import Enemy
 from player import Player
 from global_variables import *
-from random import shuffle, randrange, choice
+from random import shuffle, randrange, choice, sample
 import eztext
 import pandas as pd
 
@@ -329,6 +329,10 @@ class Game(object):
             self.enemy_live = False
             self.previousKill = True
 
+        def sample_aliens():
+            self.verificationAliens = sample(self.allAliens, nTrials)
+            self.verificationStimuli.append(self.verificationAliens)
+
         if self.sight:
             self.t.reset()
 
@@ -597,6 +601,7 @@ class Game(object):
                 self.predictionData['Block'].append(self.blockCount)
                 if self.VERSION == 1:
                     self.verificationTrials = True
+                    sample_aliens()
                 elif self.VERSION == 2:
                     self.newBlock = True
                 self.first_trial = True
@@ -624,8 +629,7 @@ class Game(object):
             screen.blit(text, [center_x,center_y])
 
         def generate_image():
-            alienType = choice(self.allAliens)
-            self.verificationStimuli.append(alienType)
+            alienType = self.verificationAliens.pop()
             if alienType == 'A1':
                 image = pygame.image.load(Enemy.enemyA_images[0])
             
@@ -704,12 +708,12 @@ class Game(object):
 
 
         def display_verification_trial(image):
-            screen.blit(image, (SCREEN_WIDTH - image.get_width(), SCREEN_HEIGHT - image.get_height()))
+            screen.blit(image, (SCREEN_WIDTH//2 - image.get_width()//2, SCREEN_HEIGHT//2 - image.get_height()))
             font = pygame.font.Font(None, 25)
-            text1 = font.render("1                 2", True, GREEN)
-            text2 = font.render("A                 B", True, GREEN)
-            next_line(text1, -60)
-            next_line(text2, -100)
+            text1 = font.render("1                          2", True, GREEN)
+            text2 = font.render("Foove                 Crelch", True, GREEN)
+            next_line(text1, 60)
+            next_line(text2, 100)
 
         if self.newBlock:  
             font = pygame.font.Font(None, 25)
